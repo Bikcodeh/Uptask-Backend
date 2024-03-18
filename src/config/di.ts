@@ -1,3 +1,5 @@
 import { Container } from 'inversify';
 
-export const container = new Container();
+const container = new Container();
+
+export default container;
