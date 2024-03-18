@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import 'express-async-errors';
 import dotenv from 'dotenv';
 import colors from '@colors/colors';
