@@ -3,7 +3,7 @@ import { Request, Response } from "express";
 import { PROJECT_TYPES } from './../../domain/types/index';
 import { IProjectRepository } from '../../domain/repository/ProjectRepository';
 import { StatusCodes } from "http-status-codes";
-import { CreatingException } from "../../../../common/exception";
+import { CreatingException } from "../../../../exception";
 
 @injectable()
 export class ProjectController {

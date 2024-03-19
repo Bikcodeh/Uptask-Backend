@@ -1,7 +1,7 @@
 import colors from '@colors/colors';
 import { StatusCodes } from 'http-status-codes';
 import { Request, Response, NextFunction } from 'express';
-import { CustomException } from '../common/exception';
+import { CustomException } from '../exception';
 
 export const errorHandlerMiddleware = (
   error: Error,
