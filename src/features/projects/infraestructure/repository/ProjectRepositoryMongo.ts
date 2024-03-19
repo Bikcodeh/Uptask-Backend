@@ -24,6 +24,7 @@ export class ProjectRepositoryMongo implements IProjectRepository {
 
     async getProjectById(id: string): Promise<IProject> {
         const projectMongo = await Project.findById(new mongoose.Types.ObjectId(id));
+        if (!projectMongo) throw new NotFoundException();
         return this.mapProjectFromMongo(projectMongo);
     }
 
