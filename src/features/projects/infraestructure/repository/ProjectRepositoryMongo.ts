@@ -10,6 +10,10 @@ export class ProjectRepositoryMongo implements IProjectRepository {
 
     constructor(){ }
 
+    async getProjects(): Promise<IProject[]> {
+        return await Project.find({});
+    }
+
     async createProject  (data: IProject): Promise<IProject | null> {
         try {
             const project = new Project(data);

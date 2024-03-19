@@ -16,7 +16,8 @@ export class ProjectController {
    }
 
    public getAllProjects = async (req: Request, res: Response) => {
-      res.json({ data: 'yeah' }).send()
+      const projects = await this.projectRepository.getProjects();
+      res.json(projects)
    }
 
    public createProject = async (req: Request, res: Response) => {
