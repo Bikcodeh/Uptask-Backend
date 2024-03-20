@@ -1,4 +1,4 @@
-import { ITask, ITaskDocument } from './../../../tasks/domain/interface/index';
+import { ITaskDocument } from './../../../tasks/domain/interface/index';
 import { IProjectDocument } from './../../domain/interface/index';
 import mongoose, { Document } from 'mongoose';
 import { injectable } from 'inversify';
@@ -6,7 +6,7 @@ import { IProject } from '../../domain/interface';
 import { IProjectRepository } from '../../domain/repository/ProjectRepository';
 import { NotFoundException } from '../../../../exception';
 import { Project } from '../../domain/model/Project';
-import { Task, TaskRepositoryMongo } from '../../../tasks';
+import { TaskRepositoryMongo } from '../../../tasks';
 
 
 @injectable()

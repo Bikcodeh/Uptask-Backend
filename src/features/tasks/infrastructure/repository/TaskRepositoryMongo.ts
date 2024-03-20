@@ -1,9 +1,10 @@
 import { inject, injectable } from 'inversify';
 import { ITaskRepository } from "../../domain/repository/TaskRepository";
 import { ITask, ITaskDocument } from '../../domain/interface';
-import { IProject, IProjectDocument, IProjectRepository, PROJECT_TYPES, Project, ProjectRepositoryMongo } from '../../../projects';
+import { IProjectDocument, IProjectRepository, PROJECT_TYPES, Project, ProjectRepositoryMongo } from '../../../projects';
 import { Task } from '../../domain/model/Task';
 import { Document } from 'mongoose';
+import { ForbiddenException, NotFoundException } from '../../../../exception';
 
 @injectable()
 export class TaskRepositoryMongo implements ITaskRepository {
@@ -12,6 +13,13 @@ export class TaskRepositoryMongo implements ITaskRepository {
         @inject(PROJECT_TYPES.ProjectRepository)
         private projectRepositoy: IProjectRepository
     ) { }
+
+    async getTaskById(taskId: string, projectId: string): Promise<ITask> {
+        const task = await Task.findById(taskId);
+        if (!task) throw new NotFoundException();
+        if (task.project.toString() != projectId) throw new ForbiddenException();
+        return TaskRepositoryMongo.mapToITask(await task.populate('project'));
+    }
 
 
     async getProjectTasks(projectId: string): Promise<ITask[]> {

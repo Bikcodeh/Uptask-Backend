@@ -53,7 +53,16 @@ projectRoutes.post('/:projectId/tasks',
 projectRoutes.get('/:projectId/tasks',
     param('projectId').isMongoId().withMessage('Invalid id'),
     handleInputErrors,
+    projectValidateExist,
     tasksController.getProjectTasks
 );
+
+projectRoutes.get(
+    '/:projectId/tasks/:taskId',
+    param('projectId').isMongoId().withMessage('Invalid id'),
+    param('taskId').isMongoId().withMessage('Invalid id'),
+    handleInputErrors,
+    tasksController.getTasks
+)
 
 export { projectRoutes } 
