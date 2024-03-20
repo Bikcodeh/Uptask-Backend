@@ -47,14 +47,12 @@ projectRoutes.post('/:projectId/tasks',
     body('name').notEmpty().withMessage('Name is required'),
     body('description').notEmpty().withMessage('Description is required'),
     handleInputErrors,
-    projectValidateExist,
     tasksController.createTask
 );
 
 projectRoutes.get('/:projectId/tasks',
     param('projectId').isMongoId().withMessage('Invalid id'),
     handleInputErrors,
-    projectValidateExist,
     tasksController.getProjectTasks
 );
 

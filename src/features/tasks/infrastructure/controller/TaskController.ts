@@ -18,7 +18,7 @@ export class Taskcontroller {
     }
 
     getProjectTasks = async (req: Request, res: Response) => {
-        const tasks = await this.taskRepository.getProjectTasks(req.project.projectId);
+        const tasks = await this.taskRepository.getProjectTasks(req.params.projectId);
         res.status(StatusCodes.OK).json(tasks);
     }
 }
