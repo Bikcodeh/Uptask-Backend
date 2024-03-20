@@ -1,3 +1,4 @@
+import { ITask } from './../../../tasks/domain/interface/index';
 import { Document } from "mongoose";
 
 export interface IProject {
@@ -5,6 +6,7 @@ export interface IProject {
     projectName: string;
     clientName: string;
     description: string;
+    tasks: ITask[]
 }
 
 export interface IProjectDocument extends IProject, Document { }

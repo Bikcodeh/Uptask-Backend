@@ -1,5 +1,5 @@
 import { IProjectDocument } from './../interface/index';
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Schema, Types } from "mongoose";
 
 const ProjectSchema: Schema = new Schema<IProjectDocument>(
     {
@@ -17,9 +17,18 @@ const ProjectSchema: Schema = new Schema<IProjectDocument>(
             type: String,
             required: true,
             trim: true
-        }
+        },
+        tasks: [
+            {
+                type: Types.ObjectId,
+                ref: 'Task'
+            }
+        ]
+    },
+    {
+        timestamps: true
     }
 );
 
 const Project = mongoose.model<IProjectDocument>('Project', ProjectSchema);
-export default Project;
+export { Project };

@@ -1,0 +1,24 @@
+import { StatusCodes } from 'http-status-codes';
+import { Request, Response, json } from 'express';
+import { inject, injectable } from 'inversify';
+import { ITaskRepository } from './../../domain/repository/TaskRepository';
+import { TASK_TYPES } from '../../domain/types';
+import { IProjectRepository, PROJECT_TYPES } from '../../../projects';
+
+@injectable()
+export class Taskcontroller {
+    constructor(
+        @inject(TASK_TYPES.TaskRepository) private taskRepository: ITaskRepository,
+        @inject(PROJECT_TYPES.ProjectRepository) private projectRepository: IProjectRepository
+    ) { }
+
+    createTask = async (req: Request, res: Response) => {
+        const task = await this.taskRepository.createTask(req.body, req.params.projectId);
+        res.status(200).json({ msg: 'Task created', data: task }).send()
+    }
+
+    getProjectTasks = async (req: Request, res: Response) => {
+        const tasks = await this.taskRepository.getProjectTasks(req.project.projectId);
+        res.status(StatusCodes.OK).json(tasks);
+    }
+}

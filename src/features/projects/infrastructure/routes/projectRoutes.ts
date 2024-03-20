@@ -1,22 +1,25 @@
-import { handleInputErrors } from './../../../../middleware/validatorMiddleware';
+import { handleInputErrors } from '../../../../middleware/validatorMiddleware';
 import { Router } from "express";
 import { body, param } from 'express-validator';
 import { ProjectController } from '../controller/ProjectController';
 import container from "../../../../config/di";
+import { Taskcontroller } from '../../../tasks';
+import { projectValidateExist } from '../../../../middleware';
 
-const router = Router();
+const projectRoutes = Router();
 
 const projectController = container.resolve(ProjectController);
+const tasksController = container.resolve(Taskcontroller);
 
-router.get('/', projectController.getAllProjects);
+projectRoutes.get('/', projectController.getAllProjects);
 
-router.get('/:id',
+projectRoutes.get('/:id',
     param('id').isMongoId().withMessage('Invalid id'),
     handleInputErrors,
     projectController.getProjectById
 );
 
-router.post('/',
+projectRoutes.post('/',
     body('projectName').notEmpty().withMessage('ProjectName is required'),
     body('clientName').notEmpty().withMessage('ClientName is required'),
     body('description').notEmpty().withMessage('Description is required'),
@@ -24,7 +27,7 @@ router.post('/',
     projectController.createProject
 );
 
-router.put('/:id',
+projectRoutes.put('/:id',
     param('id').isMongoId().withMessage('Invalid id'),
     body('projectName').notEmpty().withMessage('ProjectName is required'),
     body('clientName').notEmpty().withMessage('ClientName is required'),
@@ -33,10 +36,26 @@ router.put('/:id',
     projectController.updateProjectById
 );
 
-router.delete('/:id',
+projectRoutes.delete('/:id',
     param('id').isMongoId().withMessage('Invalid id'),
     handleInputErrors,
     projectController.deleteProjectById
 );
 
-export default router;
+projectRoutes.post('/:projectId/tasks',
+    param('projectId').isMongoId().withMessage('Invalid id'),
+    body('name').notEmpty().withMessage('Name is required'),
+    body('description').notEmpty().withMessage('Description is required'),
+    handleInputErrors,
+    projectValidateExist,
+    tasksController.createTask
+);
+
+projectRoutes.get('/:projectId/tasks',
+    param('projectId').isMongoId().withMessage('Invalid id'),
+    handleInputErrors,
+    projectValidateExist,
+    tasksController.getProjectTasks
+);
+
+export { projectRoutes } 
