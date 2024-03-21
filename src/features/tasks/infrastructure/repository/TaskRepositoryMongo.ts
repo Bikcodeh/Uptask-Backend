@@ -14,6 +14,13 @@ export class TaskRepositoryMongo implements ITaskRepository {
         private projectRepositoy: IProjectRepository
     ) { }
 
+    async updateTaskById(taskId: string, projectId: string, data: ITask): Promise<ITask> {
+        const task = await Task.findByIdAndUpdate(taskId, {...data}, { new: true})
+        if (!task) throw new NotFoundException();
+        if (task.project.toString() != projectId) throw new ForbiddenException();
+        return TaskRepositoryMongo.mapToITask(await task.populate('project'));
+    }
+
     async getTaskById(taskId: string, projectId: string): Promise<ITask> {
         const task = await Task.findById(taskId);
         if (!task) throw new NotFoundException();

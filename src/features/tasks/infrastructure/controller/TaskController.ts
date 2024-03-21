@@ -26,4 +26,9 @@ export class Taskcontroller {
         const task = await this.taskRepository.getTaskById(req.params.taskId, req.params.projectId)
         res.status(StatusCodes.OK).json(task)
     }
+
+    updateTaskById = async (req: Request, res: Response) => {
+        const task = await this.taskRepository.updateTaskById(req.params.taskId, req.params.projectId, req.body)
+        res.status(StatusCodes.OK).json(task)
+    }
 }

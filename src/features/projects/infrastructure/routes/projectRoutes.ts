@@ -65,4 +65,14 @@ projectRoutes.get(
     tasksController.getTasks
 )
 
+projectRoutes.put(
+    '/:projectId/tasks/:taskId',
+    param('projectId').isMongoId().withMessage('Invalid id'),
+    param('taskId').isMongoId().withMessage('Invalid id'),
+    body('name').notEmpty().withMessage('Name is required'),
+    body('description').notEmpty().withMessage('Description is required'),
+    handleInputErrors,
+    tasksController.updateTaskById
+)
+
 export { projectRoutes } 
