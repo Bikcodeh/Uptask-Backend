@@ -4,6 +4,7 @@ import { inject, injectable } from 'inversify';
 import { ITaskRepository } from './../../domain/repository/TaskRepository';
 import { TASK_TYPES } from '../../domain/types';
 import { IProjectRepository, PROJECT_TYPES } from '../../../projects';
+import { CustomException } from '../../../../exception';
 
 @injectable()
 export class Taskcontroller {
@@ -28,7 +29,17 @@ export class Taskcontroller {
     }
 
     updateTaskById = async (req: Request, res: Response) => {
-        const task = await this.taskRepository.updateTaskById(req.params.taskId, req.params.projectId, req.body)
-        res.status(StatusCodes.OK).json(task)
+        const task = await this.taskRepository.updateTaskById(req.params.taskId, req.params.projectId, req.body);
+        res.status(StatusCodes.OK).json(task);
+    }
+
+
+    deleteTask = async (req: Request, res: Response) => {
+        const deleted = await this.taskRepository.deleteTaskById(req.params.taskId, req.params.projectId);
+        if (deleted) {
+            res.status(StatusCodes.OK).json({ msg: 'Deleted' })
+        } else {
+            throw new CustomException()
+        }
     }
 }

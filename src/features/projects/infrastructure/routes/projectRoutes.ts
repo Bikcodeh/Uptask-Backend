@@ -75,4 +75,12 @@ projectRoutes.put(
     tasksController.updateTaskById
 )
 
+projectRoutes.delete(
+    '/:projectId/tasks/:taskId',
+    param('projectId').isMongoId().withMessage('Invalid id'),
+    param('taskId').isMongoId().withMessage('Invalid id'),
+    handleInputErrors,
+    tasksController.deleteTask
+)
+
 export { projectRoutes } 
