@@ -42,4 +42,8 @@ export class Taskcontroller {
             throw new CustomException()
         }
     }
+
+    updateStatusById = async (req: Request, res: Response) => {
+
+    }
 }

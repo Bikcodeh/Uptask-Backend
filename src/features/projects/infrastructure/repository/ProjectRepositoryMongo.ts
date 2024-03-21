@@ -13,22 +13,20 @@ import { TaskRepositoryMongo } from '../../../tasks';
 export class ProjectRepositoryMongo implements IProjectRepository {
 
     async deleteProjectById(id: string): Promise<boolean> {
-        const project = await Project.findById(new mongoose.Types.ObjectId(id));
-        if (!project) throw new NotFoundException();
+        const project = await ProjectRepositoryMongo.validateProject(id);
         await project.deleteOne()
         return true
     }
 
     async updateProject(id: string, data: IProject): Promise<IProject> {
-        const project = await Project.findByIdAndUpdate(new mongoose.Types.ObjectId(id), { ...data }, { new: true })
+        const project = await Project.findByIdAndUpdate(new mongoose.Types.ObjectId(id), { ...data })
         if (!project) throw new NotFoundException();
         return ProjectRepositoryMongo.mapProjectFromMongo(await project.populate('tasks'))
     }
 
     async getProjectById(id: string): Promise<IProject> {
-        const projectMongo = await Project.findById(id).populate('tasks');
-        if (!projectMongo) throw new NotFoundException();
-        return ProjectRepositoryMongo.mapProjectFromMongo(projectMongo);
+        const projectMongo = await ProjectRepositoryMongo.validateProject(id);
+        return ProjectRepositoryMongo.mapProjectFromMongo(await projectMongo.populate('tasks'));
     }
 
     async getProjects(): Promise<IProject[]> {
@@ -44,6 +42,12 @@ export class ProjectRepositoryMongo implements IProjectRepository {
         } catch (error) {
             return null;
         }
+    }
+
+    static async validateProject(projectId: string): Promise<IProjectDocument> {
+        const project = await Project.findById(projectId).populate('tasks');
+        if (!project) throw new NotFoundException('Project not found');
+        return project
     }
 
     static mapProjectFromMongo = (projectMongo: Document & IProjectDocument): IProject => {

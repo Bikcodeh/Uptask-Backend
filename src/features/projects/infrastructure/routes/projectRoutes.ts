@@ -4,7 +4,7 @@ import { body, param } from 'express-validator';
 import { ProjectController } from '../controller/ProjectController';
 import container from "../../../../config/di";
 import { Taskcontroller } from '../../../tasks';
-import { projectValidateExist } from '../../../../middleware';
+
 
 const projectRoutes = Router();
 
@@ -53,7 +53,6 @@ projectRoutes.post('/:projectId/tasks',
 projectRoutes.get('/:projectId/tasks',
     param('projectId').isMongoId().withMessage('Invalid id'),
     handleInputErrors,
-    projectValidateExist,
     tasksController.getProjectTasks
 );
 
@@ -81,6 +80,15 @@ projectRoutes.delete(
     param('taskId').isMongoId().withMessage('Invalid id'),
     handleInputErrors,
     tasksController.deleteTask
+)
+
+projectRoutes.put(
+    '/:projectId/tasks/:taskId/status',
+    param('projectId').isMongoId().withMessage('Invalid id'),
+    param('taskId').isMongoId().withMessage('Invalid id'),
+    body('status').notEmpty().withMessage('status is required'),
+    handleInputErrors,
+    tasksController.updateStatusById
 )
 
 export { projectRoutes } 

@@ -6,4 +6,5 @@ export interface ITaskRepository {
     getTaskById(taskId: string, projectId: string): Promise<ITask>
     updateTaskById(taskId: string, projectId: string, data: ITask): Promise<ITask>
     deleteTaskById(taskId: string, projectId: string): Promise<boolean>
+    updateStatusTaskById(taskId: string, projectId: string, status: string): Promise<ITask>
 }
