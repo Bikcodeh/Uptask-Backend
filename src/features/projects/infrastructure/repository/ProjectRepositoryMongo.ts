@@ -1,67 +1,68 @@
-import { ITaskDocument } from './../../../tasks/domain/interface/index';
+import { inject, injectable } from 'inversify';
 import { IProjectDocument } from './../../domain/interface/index';
-import mongoose, { Document } from 'mongoose';
-import { injectable } from 'inversify';
 import { IProject } from '../../domain/interface';
 import { IProjectRepository } from '../../domain/repository/ProjectRepository';
-import { NotFoundException } from '../../../../exception';
 import { Project } from '../../domain/model/Project';
-import { TaskRepositoryMongo } from '../../../tasks';
-
+import { PROJECT_TYPES } from '../../domain/types';
+import { ProjectMapper } from '../mapper/ProjectMapper';
+import { ITask, TASK_TYPES, TaskMapper } from '../../../tasks';
+import mongoose from 'mongoose';
 
 @injectable()
 export class ProjectRepositoryMongo implements IProjectRepository {
 
+    constructor(
+        @inject(PROJECT_TYPES.ProjectMapper)
+        private projectMapper: ProjectMapper,
+        @inject(TASK_TYPES.TaskMapper)
+        private taskMapper: TaskMapper
+    ) { }
+
+
+    async deleteTask(projectId: String, taskId: string): Promise<boolean> {
+        const project = await Project.findById(projectId);
+        project.tasks = project.tasks.filter(t => t.toString() !== taskId);
+        await project.save();
+        return true;
+    }
+
+    async addTask(projectId: string, task: ITask): Promise<boolean> {
+        const project = await Project.findById(new mongoose.Types.ObjectId(projectId));
+        if (!project) return false;
+        project.tasks.push(task);
+        await project.save()
+        return true
+    }
+
     async deleteProjectById(id: string): Promise<boolean> {
-        const project = await ProjectRepositoryMongo.validateProject(id);
+        const project = await Project.findById(id);
         await project.deleteOne()
         return true
     }
 
     async updateProject(id: string, data: IProject): Promise<IProject> {
-        const project = await Project.findByIdAndUpdate(new mongoose.Types.ObjectId(id), { ...data })
-        if (!project) throw new NotFoundException();
-        return ProjectRepositoryMongo.mapProjectFromMongo(await project.populate('tasks'))
+        const project = await Project.findByIdAndUpdate(id, { ...data });
+        return this.projectMapper.toIProject(await project.populate('tasks'), this.taskMapper);
     }
 
-    async getProjectById(id: string): Promise<IProject> {
-        const projectMongo = await ProjectRepositoryMongo.validateProject(id);
-        return ProjectRepositoryMongo.mapProjectFromMongo(await projectMongo.populate('tasks'));
+    async getProjectById(id: string): Promise<IProject | null> {
+        const project = await Project.findById(id)
+        if (!project) return null;
+        return this.projectMapper.toIProject(await project.populate('tasks'), this.taskMapper);
     }
 
     async getProjects(): Promise<IProject[]> {
         const projects = await Project.find({}).populate('tasks');
-        return projects.map(p => ProjectRepositoryMongo.mapProjectFromMongo(p));
+        return projects.map(p => this.projectMapper.toIProject(p, this.taskMapper));
     }
 
     async createProject(data: IProject): Promise<IProject | null> {
         try {
             const project = new Project(data);
             await project.save();
-            return ProjectRepositoryMongo.mapProjectFromMongo(project);
+            return this.projectMapper.toIProject(project, this.taskMapper);
         } catch (error) {
             return null;
         }
-    }
-
-    static async validateProject(projectId: string): Promise<IProjectDocument> {
-        const project = await Project.findById(projectId).populate('tasks');
-        if (!project) throw new NotFoundException('Project not found');
-        return project
-    }
-
-    static mapProjectFromMongo = (projectMongo: Document & IProjectDocument): IProject => {
-        const { _id, __v, ...projectData } = projectMongo.toObject();
-        const project = projectData as IProject;
-        project.projectId = _id.toString();
-        project.tasks = projectMongo.tasks.map(t => TaskRepositoryMongo.mapToITaskNoProject(t as ITaskDocument))
-        return project;
-    };
-
-    static mapToIProject(projectDocument: Document & IProjectDocument) {
-        const { _id, __v, tasks, ...projectData } = projectDocument.toObject();
-        const project = projectData as IProject;
-        project.projectId = _id.toString();
-        return project;
     }
 }

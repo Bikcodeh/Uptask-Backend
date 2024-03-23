@@ -1,77 +1,72 @@
-import { injectable } from 'inversify';
+import { inject, injectable } from 'inversify';
 import { ITaskRepository } from "../../domain/repository/TaskRepository";
-import { ITask, ITaskDocument } from '../../domain/interface';
-import { IProjectDocument, ProjectRepositoryMongo, Project } from '../../../projects';
+import { ITask } from '../../domain/interface';
+import { IProject, IProjectDocument, IProjectRepository, PROJECT_TYPES, Project, ProjectMapper } from '../../../projects';
 import { Task } from '../../domain/model/Task';
-import { Document } from 'mongoose';
-import { ForbiddenException, NotFoundException } from '../../../../exception';
+import { TASK_TYPES } from '../../domain/types';
+import { TaskMapper } from '../mapper/TaskMapper';
+import mongoose from 'mongoose';
 
 @injectable()
 export class TaskRepositoryMongo implements ITaskRepository {
+
+    constructor(
+        @inject(PROJECT_TYPES.ProjectRepository) private projectRepository: IProjectRepository,
+        @inject(TASK_TYPES.TaskMapper) private taskMapper: TaskMapper,
+        @inject(PROJECT_TYPES.ProjectMapper) private projectMapper: ProjectMapper
+    ) { }
+
+
+    async getTask(taskId: string): Promise<ITask | null> {
+        const task = await Task.findById(taskId);
+        if (!task) return null;
+        return task;
+    }
 
     async updateStatusTaskById(taskId: string, projectId: string, status: string): Promise<ITask> {
         return null
     }
 
-    async deleteTaskById(taskId: string, projectId: string): Promise<boolean> {
-        const task = await this.validateTask(taskId, projectId);
-        const project = await ProjectRepositoryMongo.validateProject(projectId);
-        project.tasks = project.tasks.filter(t => t.toString() !== taskId)
-        await Promise.allSettled([project.save(), task.deleteOne()])
-        return true
+    async deleteTask(task: ITask, projectId: string): Promise<boolean> {
+        const taskDocument = await Task.findById(task.taskId);
+        const deleted = await this.projectRepository.deleteTask(projectId, task.taskId);
+        if (deleted) {
+            await taskDocument.deleteOne()
+            return true
+        } else {
+            return false
+        }
     }
 
-    async updateTaskById(taskId: string, projectId: string, data: ITask): Promise<ITask> {
-        const task = await this.validateTask(taskId, projectId);
-        task.name = data.name;
-        task.description = data.description;
-        await task.save();
-        return TaskRepositoryMongo.mapToITask(await task.populate('project'));
+    async updateTask(task: ITask, newData: ITask): Promise<ITask> {
+        const taskDocument = await Task.findById(task.taskId);
+        taskDocument.name = newData.name;
+        taskDocument.description = newData.description;
+        await taskDocument.save();
+        return this.taskMapper.mapToITask(await taskDocument.populate('project'));
     }
 
     async getTaskById(taskId: string, projectId: string): Promise<ITask> {
-        const task = await this.validateTask(taskId, projectId);
-        return TaskRepositoryMongo.mapToITask(await task.populate('project'));
+        const task = await Task.findOne({ _id: taskId, project: projectId });
+        if (!task) return null;
+        return this.taskMapper.mapToITaskWithProjectId(await task.populate('project'));
     }
-
 
     async getProjectTasks(projectId: string): Promise<ITask[]> {
-        await ProjectRepositoryMongo.validateProject(projectId);
         const tasks = await Task.find({ project: projectId }).populate('project');
-        return tasks.map(t => TaskRepositoryMongo.mapToITask(t))
+        return tasks.map(t => this.taskMapper.mapToITaskWithProjectId(t))
     }
 
-    createTask = async (data: ITask, projectId: string): Promise<ITask> => {
-        const project = await ProjectRepositoryMongo.validateProject(projectId);
+    async createTask(data: ITask, project: IProject): Promise<ITask | null> {
         const task = new Task(data);
-        project.tasks.push(task.id)
-        task.project = project._id;
-        await Promise.allSettled([task.save(), project.save()])
-        return TaskRepositoryMongo.mapToITask(await task.populate('project'));
-    }
+        task.project = this.projectMapper.toIProjectDocument(project);
 
-    private async validateTask(taskId: string, projectId?: string): Promise<ITaskDocument> {
-        const task = await Task.findById(taskId);
-        if (!task) throw new NotFoundException('Task not found');
-        if (projectId) {
-            if (task.project.toString() != projectId) throw new ForbiddenException();
+        const added = await this.projectRepository.addTask(project.projectId, task);
+        if (added) {
+            const savedTask = await task.save();
+            return this.taskMapper.mapToITaskWithProjectId(await savedTask.populate('project'));
+        } else {
+            return null;
         }
-        return task
     }
-
-    static mapToITask (taskDocument: Document & ITaskDocument): ITask {
-        const { _id, __v, ...taskData } = taskDocument.toObject();
-        const task = taskData as ITask;
-        task.taskId = _id.toString();
-        task.project = ProjectRepositoryMongo.mapToIProject(taskDocument.project as IProjectDocument)
-        return task;
-    }
-
-    static mapToITaskNoProject (taskDocument: Document & ITaskDocument): ITask {
-        const { _id, __v, project, ...taskData } = taskDocument.toObject();
-        const task = taskData as ITask;
-        task.taskId = _id.toString();
-        return task;
-    }
-
 }

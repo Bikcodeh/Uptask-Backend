@@ -61,7 +61,7 @@ projectRoutes.get(
     param('projectId').isMongoId().withMessage('Invalid id'),
     param('taskId').isMongoId().withMessage('Invalid id'),
     handleInputErrors,
-    tasksController.getTasks
+    tasksController.getTaskById
 )
 
 projectRoutes.put(

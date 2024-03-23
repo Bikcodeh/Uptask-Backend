@@ -1,41 +1,38 @@
 import { StatusCodes } from 'http-status-codes';
-import { Request, Response, json } from 'express';
+import { Request, Response } from 'express';
 import { inject, injectable } from 'inversify';
-import { ITaskRepository } from './../../domain/repository/TaskRepository';
 import { TASK_TYPES } from '../../domain/types';
-import { IProjectRepository, PROJECT_TYPES } from '../../../projects';
 import { CustomException } from '../../../../exception';
+import { TaskService } from '../service/TaskService';
 
 @injectable()
 export class Taskcontroller {
     constructor(
-        @inject(TASK_TYPES.TaskRepository) private taskRepository: ITaskRepository,
-        @inject(PROJECT_TYPES.ProjectRepository) private projectRepository: IProjectRepository
+        @inject(TASK_TYPES.TaskService) private taskService: TaskService
     ) { }
 
     createTask = async (req: Request, res: Response) => {
-        const task = await this.taskRepository.createTask(req.body, req.params.projectId);
-        res.status(200).json({ msg: 'Task created', data: task }).send()
+        const task = await this.taskService.createTask(req.body, req.params.projectId);
+        res.status(StatusCodes.OK).json({ msg: 'Task created', data: task }).send()
     }
 
     getProjectTasks = async (req: Request, res: Response) => {
-        const tasks = await this.taskRepository.getProjectTasks(req.params.projectId);
+        const tasks = await this.taskService.getProjectTasks(req.params.projectId);
         res.status(StatusCodes.OK).json(tasks);
     }
 
-    getTasks = async (req: Request, res: Response) => {
-        const task = await this.taskRepository.getTaskById(req.params.taskId, req.params.projectId)
+    getTaskById = async (req: Request, res: Response) => {
+        const task = await this.taskService.getTaskById(req.params.taskId, req.params.projectId)
         res.status(StatusCodes.OK).json(task)
     }
 
     updateTaskById = async (req: Request, res: Response) => {
-        const task = await this.taskRepository.updateTaskById(req.params.taskId, req.params.projectId, req.body);
+        const task = await this.taskService.updateTaskById(req.params.taskId, req.params.projectId, req.body);
         res.status(StatusCodes.OK).json(task);
     }
 
-
     deleteTask = async (req: Request, res: Response) => {
-        const deleted = await this.taskRepository.deleteTaskById(req.params.taskId, req.params.projectId);
+        const deleted = await this.taskService.deleteTask(req.params.taskId, req.params.projectId);
         if (deleted) {
             res.status(StatusCodes.OK).json({ msg: 'Deleted' })
         } else {
