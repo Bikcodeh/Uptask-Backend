@@ -43,7 +43,7 @@ export class TaskRepositoryMongo implements ITaskRepository {
         taskDocument.name = newData.name;
         taskDocument.description = newData.description;
         await taskDocument.save();
-        return this.taskMapper.mapToITask(await taskDocument.populate('project'));
+        return this.taskMapper.mapToITaskWithProjectId(await taskDocument.populate('project'));
     }
 
     async getTaskById(taskId: string, projectId: string): Promise<ITask> {
