@@ -7,3 +7,4 @@ export * from './infrastructure/repository/TaskRepositoryMongo';
 export * from './infrastructure/routes/taskRoutes';
 export * from './infrastructure/mapper/TaskMapper';
 export * from './infrastructure/service/TaskService';
+export * from './infrastructure/routes/taskRoutes';

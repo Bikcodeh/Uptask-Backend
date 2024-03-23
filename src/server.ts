@@ -1,7 +1,7 @@
 import express from "express";
 import { errorHandlerMiddleware } from "./middleware";
-import { projectRoutes } from "./features/projects/infrastructure/routes/projectRoutes";
-import { taskRoutes } from "./features/tasks/infrastructure/routes/taskRoutes";
+import { projectRoutes } from "./features/projects";
+import { taskRoutes } from "./features/tasks";
 
 const app = express();
 app.use(express.json());
