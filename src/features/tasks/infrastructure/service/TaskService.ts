@@ -2,7 +2,7 @@ import { inject, injectable } from 'inversify';
 import { TASK_TYPES } from '../../domain/types';
 import { ITaskRepository } from '../../domain/repository/TaskRepository';
 import { ITask } from '../../domain/interface';
-import { NotFoundException, ForbiddenException, CreatingException } from '../../../../exception';
+import { NotFoundException, ForbiddenException, CreatingException, DeleteException } from '../../../../exception';
 import { ProjectService } from '../../../projects/infrastructure/service/ProjectService';
 import { PROJECT_TYPES } from '../../../projects/domain/types';
 
@@ -37,11 +37,14 @@ export class TaskService {
         return await this.taskRepository.updateTask(task, data);
     }
 
-    deleteTask = async (taskId: string, projectId: string): Promise<boolean> => {
+    deleteTask = async (taskId: string, projectId: string): Promise<void> => {
         await this.validateTaskExist(taskId, projectId);
         await this.projectService.validateProjectExist(projectId);
         const task = await this.validateProjectBelongs(taskId, projectId);
-        return await this.taskRepository.deleteTask(task, projectId);
+        const deleted = await this.taskRepository.deleteTask(task, projectId);
+        if (!deleted) {
+            throw new DeleteException();
+        }
 
     }
 

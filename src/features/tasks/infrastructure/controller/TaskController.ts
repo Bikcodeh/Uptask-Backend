@@ -32,12 +32,8 @@ export class Taskcontroller {
     }
 
     deleteTask = async (req: Request, res: Response) => {
-        const deleted = await this.taskService.deleteTask(req.params.taskId, req.params.projectId);
-        if (deleted) {
-            res.status(StatusCodes.OK).json({ msg: 'Deleted' })
-        } else {
-            throw new CustomException()
-        }
+        await this.taskService.deleteTask(req.params.taskId, req.params.projectId);
+        res.status(StatusCodes.OK).json({ msg: 'Task Deleted' })
     }
 
     updateStatusById = async (req: Request, res: Response) => {

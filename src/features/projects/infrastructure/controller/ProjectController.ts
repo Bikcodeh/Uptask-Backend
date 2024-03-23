@@ -36,6 +36,5 @@ export class ProjectController {
    deleteProjectById = async (req: Request, res: Response) => {
       await this.projectService.deleteProjectById(req.params.id);
       res.status(StatusCodes.OK).json({ msg: 'Project deleted' });
-
    }
 }
