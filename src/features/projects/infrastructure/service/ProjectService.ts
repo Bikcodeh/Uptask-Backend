@@ -2,7 +2,7 @@ import { inject, injectable } from 'inversify';
 import { PROJECT_TYPES } from '../../domain/types';
 import { IProjectRepository } from '../../domain/repository/ProjectRepository';
 import { IProject } from '../../domain/interface';
-import { CreatingException, NotFoundException } from '../../../../exception';
+import { CreatingException, DeleteException, NotFoundException } from '../../../../exception';
 
 @injectable()
 export class ProjectService {
@@ -10,7 +10,7 @@ export class ProjectService {
     constructor(@inject(PROJECT_TYPES.ProjectRepository) private projectRepository: IProjectRepository) { }
 
     async getProjectById(projectId): Promise<IProject> {
-        const project = this.validateProjectExist(projectId);
+        const project = await this.validateProjectExist(projectId);
         return project;
     }
 
@@ -23,9 +23,12 @@ export class ProjectService {
         return await this.projectRepository.getProjects()
     }
 
-    async deleteProjectById(id: string): Promise<boolean> {
+    async deleteProjectById(id: string): Promise<void> {
         await this.validateProjectExist(id)
-        return await this.projectRepository.deleteProjectById(id);
+        const deleted = await this.projectRepository.deleteProjectById(id);
+        if (!deleted) {
+            throw new DeleteException();
+        }
     }
 
     async updateProject(id: string, data: IProject): Promise<IProject> {
