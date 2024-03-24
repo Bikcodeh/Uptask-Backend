@@ -17,6 +17,8 @@ export interface ITask {
     description: string;
     project: IProject;
     status: TaskStatus;
+    createdAt: string;
+    updatedAt: string;
 }
 
 export interface ITaskDocument extends ITask, Document { }

@@ -41,12 +41,13 @@ export class ProjectRepositoryMongo implements IProjectRepository {
     }
 
     async updateProject(id: string, data: IProject): Promise<IProject> {
-        const project = await Project.findByIdAndUpdate(id, { ...data });
+        const project = await Project.findOneAndUpdate({ _id: id }, { ...data }, { new: true });
         return this.projectMapper.toIProject(await project.populate('tasks'), this.taskMapper);
     }
 
     async getProjectById(id: string): Promise<IProject | null> {
-        const project = await Project.findById(id)
+        const project = await Project.findOne({ _id: id });
+        console.log(project)
         if (!project) return null;
         return this.projectMapper.toIProject(await project.populate('tasks'), this.taskMapper);
     }
@@ -59,8 +60,8 @@ export class ProjectRepositoryMongo implements IProjectRepository {
     async createProject(data: IProject): Promise<IProject | null> {
         try {
             const project = new Project(data);
-            await project.save();
-            return this.projectMapper.toIProject(project, this.taskMapper);
+            const saved = await project.save();
+            return this.projectMapper.toIProject(saved, this.taskMapper);
         } catch (error) {
             return null;
         }

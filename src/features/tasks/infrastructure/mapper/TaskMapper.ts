@@ -16,7 +16,9 @@ export class TaskMapper {
         const task = {
             taskId: taskData.id,
             name: taskDocument.name,
-            description: taskDocument.description
+            description: taskDocument.description,
+            createdAt: taskDocument.createdAt,
+            updatedAt: taskDocument.updatedAt
         } as ITask;
         task.project = this.projectMapper.toIProject(taskDocument.project as IProjectDocument, this);
         return task;
@@ -26,7 +28,9 @@ export class TaskMapper {
         const task = {
             taskId: taskDocument._id.toString(),
             name: taskDocument.name,
-            description: taskDocument.description
+            description: taskDocument.description,
+            createdAt: taskDocument.createdAt,
+            updatedAt: taskDocument.updatedAt
         } as ITask;
         task.project = { projectId: this.projectMapper.toIProjectDocument(taskDocument.project)._id.toString() } as IProject;
         return task;
@@ -36,7 +40,9 @@ export class TaskMapper {
         const task = {
             taskId: taskDocument._id.toString(),
             name: taskDocument.name,
-            description: taskDocument.description
+            description: taskDocument.description,
+            createdAt: taskDocument.createdAt,
+            updatedAt: taskDocument.updatedAt
         } as ITask;
         return task;
     }

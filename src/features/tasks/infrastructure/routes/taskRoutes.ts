@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { handleInputErrors } from '../../../../middleware/validatorMiddleware';
+import { handleInputErrors } from '../../../../common/middleware/validatorMiddleware';
 import { body, param } from 'express-validator';
 
 const taskRoutes = Router();
