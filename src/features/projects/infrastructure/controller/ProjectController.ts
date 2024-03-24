@@ -2,7 +2,7 @@ import { inject, injectable } from "inversify";
 import { Request, Response } from "express";
 import { PROJECT_TYPES } from '../../domain/types/index';
 import { StatusCodes } from "http-status-codes";
-import { DeleteException } from "../../../../exception";
+import { DeleteException } from "../../../../common/exception";
 import { ProjectService } from "../service/ProjectService";
 import { wrapResponse } from "../../../../common/response/apiResponse";
 

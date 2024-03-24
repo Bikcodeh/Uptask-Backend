@@ -2,7 +2,7 @@ import { inject, injectable } from 'inversify';
 import { TASK_TYPES } from '../../domain/types';
 import { ITaskRepository } from '../../domain/repository/TaskRepository';
 import { ITask } from '../../domain/interface';
-import { NotFoundException, ForbiddenException, CreatingException, DeleteException } from '../../../../exception';
+import { NotFoundException, ForbiddenException, CreatingException, DeleteException } from '../../../../common/exception';
 import { ProjectService } from '../../../projects/infrastructure/service/ProjectService';
 import { PROJECT_TYPES } from '../../../projects/domain/types';
 

@@ -2,7 +2,7 @@ import { inject, injectable } from 'inversify';
 import { PROJECT_TYPES } from '../../domain/types';
 import { IProjectRepository } from '../../domain/repository/ProjectRepository';
 import { IProject } from '../../domain/interface';
-import { CreatingException, DeleteException, NotFoundException } from '../../../../exception';
+import { CreatingException, DeleteException, NotFoundException } from '../../../../common/exception';
 
 @injectable()
 export class ProjectService {
