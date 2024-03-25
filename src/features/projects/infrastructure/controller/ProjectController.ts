@@ -2,7 +2,6 @@ import { inject, injectable } from "inversify";
 import { Request, Response } from "express";
 import { PROJECT_TYPES } from '../../domain/types/index';
 import { StatusCodes } from "http-status-codes";
-import { DeleteException } from "../../../../common/exception";
 import { ProjectService } from "../service/ProjectService";
 import { wrapResponse } from "../../../../common/response/apiResponse";
 
@@ -13,7 +12,6 @@ export class ProjectController {
       @inject(PROJECT_TYPES.ProjectService) private projectService: ProjectService
    ) { }
 
-
    getAllProjects = async (req: Request, res: Response) => {
       const projects = await this.projectService.getProjects();
       res.status(StatusCodes.OK).json(wrapResponse({ data: projects }))
@@ -21,7 +19,7 @@ export class ProjectController {
 
    createProject = async (req: Request, res: Response) => {
       const project = await this.projectService.createProject(req.body);
-      res.status(StatusCodes.CREATED).json(wrapResponse({ data: project })).send()
+      res.status(StatusCodes.CREATED).json(wrapResponse({ msg: 'Project created successfully', data: project })).send()
    }
 
    getProjectById = async (req: Request, res: Response) => {
@@ -31,7 +29,7 @@ export class ProjectController {
 
    updateProjectById = async (req: Request, res: Response) => {
       const project = await this.projectService.updateProject(req.params.id, req.body);
-      res.status(StatusCodes.OK).json(wrapResponse({ data: project }));
+      res.status(StatusCodes.OK).json(wrapResponse({ msg: 'Project updated successfully' ,data: project }));
    }
 
    deleteProjectById = async (req: Request, res: Response) => {
