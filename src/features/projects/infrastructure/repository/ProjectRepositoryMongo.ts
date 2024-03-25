@@ -47,7 +47,6 @@ export class ProjectRepositoryMongo implements IProjectRepository {
 
     async getProjectById(id: string): Promise<IProject | null> {
         const project = await Project.findOne({ _id: id });
-        console.log(project)
         if (!project) return null;
         return this.projectMapper.toIProject(await project.populate('tasks'), this.taskMapper);
     }
