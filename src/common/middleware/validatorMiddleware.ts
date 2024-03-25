@@ -7,7 +7,7 @@ import { wrapResponse } from '../response/apiResponse';
 export const handleInputErrors = (req: Request, res: Response, next: NextFunction) => {
     let errorsValidation = validationResult(req);
     if (!errorsValidation.isEmpty()) {
-        return res.status(StatusCodes.BAD_REQUEST).json(wrapResponse({ success: false, errors: errorsValidation.array() }))
+        return res.status(StatusCodes.BAD_REQUEST).json(wrapResponse({ success: false, msg: 'All fields are required' }))
     }
     next();
 }
