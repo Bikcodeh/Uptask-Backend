@@ -18,7 +18,8 @@ export class TaskMapper {
             name: taskDocument.name,
             description: taskDocument.description,
             createdAt: taskDocument.createdAt,
-            updatedAt: taskDocument.updatedAt
+            updatedAt: taskDocument.updatedAt,
+            status: taskDocument.status
         } as ITask;
         task.project = this.projectMapper.toIProject(taskDocument.project as IProjectDocument, this);
         return task;
@@ -30,7 +31,8 @@ export class TaskMapper {
             name: taskDocument.name,
             description: taskDocument.description,
             createdAt: taskDocument.createdAt,
-            updatedAt: taskDocument.updatedAt
+            updatedAt: taskDocument.updatedAt,
+            status: taskDocument.status
         } as ITask;
         task.project = { projectId: this.projectMapper.toIProjectDocument(taskDocument.project)._id.toString() } as IProject;
         return task;
@@ -42,7 +44,8 @@ export class TaskMapper {
             name: taskDocument.name,
             description: taskDocument.description,
             createdAt: taskDocument.createdAt,
-            updatedAt: taskDocument.updatedAt
+            updatedAt: taskDocument.updatedAt,
+            status: taskDocument.status
         } as ITask;
         return task;
     }

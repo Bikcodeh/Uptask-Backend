@@ -3,11 +3,14 @@ import { PROJECT_TYPES } from '../../domain/types';
 import { IProjectRepository } from '../../domain/repository/ProjectRepository';
 import { IProject } from '../../domain/interface';
 import { CreatingException, DeleteException, NotFoundException } from '../../../../common/exception';
+import { ProjectMapper } from '../mapper/ProjectMapper';
 
 @injectable()
 export class ProjectService {
 
-    constructor(@inject(PROJECT_TYPES.ProjectRepository) private projectRepository: IProjectRepository) { }
+    constructor(
+        @inject(PROJECT_TYPES.ProjectRepository) private projectRepository: IProjectRepository
+    ) { }
 
     async getProjectById(projectId): Promise<IProject> {
         const project = await this.validateProjectExist(projectId);
@@ -42,5 +45,4 @@ export class ProjectService {
         if (!project) throw new NotFoundException('Project not found');
         return project;
     }
-
 }
