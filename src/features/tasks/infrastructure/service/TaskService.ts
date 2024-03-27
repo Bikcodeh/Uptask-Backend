@@ -38,14 +38,12 @@ export class TaskService {
     }
 
     deleteTask = async (taskId: string, projectId: string): Promise<void> => {
-        await this.validateTaskExist(taskId, projectId);
         await this.projectService.validateProjectExist(projectId);
         const task = await this.validateProjectBelongs(taskId, projectId);
         const deleted = await this.taskRepository.deleteTask(task, projectId);
         if (!deleted) {
             throw new DeleteException();
         }
-
     }
 
     updateStatusTaskById = async (taskId: string, projectId: string, status: string): Promise<ITask> => {
@@ -61,7 +59,7 @@ export class TaskService {
     private async validateProjectBelongs(taskId: string, projectId: string): Promise<ITask> {
         const task = await this.taskRepository.getTask(taskId);
         if (!task) throw new NotFoundException('Task not found');
-        if (task.project.toString() != projectId) throw new ForbiddenException();
+        if (task.project.projectId != projectId) throw new ForbiddenException();
         return task;
     }
 }

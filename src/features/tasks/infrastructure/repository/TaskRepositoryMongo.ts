@@ -1,11 +1,10 @@
 import { inject, injectable } from 'inversify';
 import { ITaskRepository } from "../../domain/repository/TaskRepository";
 import { ITask } from '../../domain/interface';
-import { IProject, IProjectDocument, IProjectRepository, PROJECT_TYPES, Project, ProjectMapper } from '../../../projects';
+import { IProject, IProjectRepository, PROJECT_TYPES, ProjectMapper } from '../../../projects';
 import { Task } from '../../domain/model/Task';
 import { TASK_TYPES } from '../../domain/types';
 import { TaskMapper } from '../mapper/TaskMapper';
-import mongoose from 'mongoose';
 
 @injectable()
 export class TaskRepositoryMongo implements ITaskRepository {
@@ -20,7 +19,7 @@ export class TaskRepositoryMongo implements ITaskRepository {
     async getTask(taskId: string): Promise<ITask | null> {
         const task = await Task.findById(taskId);
         if (!task) return null;
-        return task;
+        return this.taskMapper.mapToITaskWithProjectId(task);
     }
 
     async updateStatusTaskById(taskId: string, projectId: string, status: string): Promise<ITask> {
@@ -28,7 +27,9 @@ export class TaskRepositoryMongo implements ITaskRepository {
     }
 
     async deleteTask(task: ITask, projectId: string): Promise<boolean> {
+        console.log(task, projectId)
         const taskDocument = await Task.findById(task.taskId);
+        
         const deleted = await this.projectRepository.deleteTask(projectId, task.taskId);
         if (deleted) {
             await taskDocument.deleteOne()

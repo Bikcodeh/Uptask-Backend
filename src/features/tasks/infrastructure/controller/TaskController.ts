@@ -28,7 +28,7 @@ export class Taskcontroller {
 
     updateTaskById = async (req: Request, res: Response) => {
         const task = await this.taskService.updateTaskById(req.params.taskId, req.params.projectId, req.body);
-        res.status(StatusCodes.OK).json(wrapResponse({data: task}));
+        res.status(StatusCodes.OK).json(wrapResponse({msg:'Task updated successfully', data: task}));
     }
 
     deleteTask = async (req: Request, res: Response) => {
