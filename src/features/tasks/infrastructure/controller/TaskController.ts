@@ -40,8 +40,8 @@ export class Taskcontroller {
         const task = await this.taskService.updateStatusTaskById(
             req.params.taskId,
             req.params.projectId,
-            req.params.status
+            req.body.status
         );
-        res.status(StatusCodes.OK).json(wrapResponse({ success: true, data: task }))
+        res.status(StatusCodes.OK).json(wrapResponse({ data: task, msg: 'Status Updated!' }))
     }
 }

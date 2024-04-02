@@ -47,7 +47,10 @@ export class TaskService {
     }
 
     updateStatusTaskById = async (taskId: string, projectId: string, status: string): Promise<ITask> => {
-       return null;
+        await this.projectService.validateProjectExist(projectId);
+        await this.validateProjectBelongs(taskId, projectId);
+        console.log('service', status);
+        return await this.taskRepository.updateStatusTaskById(taskId, projectId, status)
     }
 
     private async validateTaskExist(taskId: string, projectId: string): Promise<ITask> {

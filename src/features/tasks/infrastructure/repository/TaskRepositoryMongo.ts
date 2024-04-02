@@ -1,3 +1,4 @@
+import { TaskStatus } from './../../domain/interface/index';
 import { inject, injectable } from 'inversify';
 import { ITaskRepository } from "../../domain/repository/TaskRepository";
 import { ITask } from '../../domain/interface';
@@ -23,7 +24,11 @@ export class TaskRepositoryMongo implements ITaskRepository {
     }
 
     async updateStatusTaskById(taskId: string, projectId: string, status: string): Promise<ITask> {
-        return null
+        const task = await Task.findOne({_id: taskId, project: projectId});
+        if (!task) return null;
+        task.status = status as TaskStatus;
+        const savedTask = await task.save()
+        return this.taskMapper.mapToITaskWithProjectId(savedTask);
     }
 
     async deleteTask(task: ITask, projectId: string): Promise<boolean> {

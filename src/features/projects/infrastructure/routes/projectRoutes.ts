@@ -82,7 +82,7 @@ projectRoutes.delete(
     tasksController.deleteTask
 )
 
-projectRoutes.put(
+projectRoutes.post(
     '/:projectId/tasks/:taskId/status',
     param('projectId').isMongoId().withMessage('Invalid id'),
     param('taskId').isMongoId().withMessage('Invalid id'),
