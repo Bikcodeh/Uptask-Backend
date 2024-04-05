@@ -1,10 +1,10 @@
+import { container } from "../../../../config/di";
 import { handleInputErrors } from '../../../../common/middleware/validatorMiddleware';
 import { Router } from "express";
 import { body, param } from 'express-validator';
 import { ProjectController } from '../controller/ProjectController';
-import container from "../../../../config/di";
 import { Taskcontroller } from '../../../tasks';
-
+import 'reflect-metadata';
 
 const projectRoutes = Router();
 

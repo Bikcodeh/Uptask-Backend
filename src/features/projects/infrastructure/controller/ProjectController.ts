@@ -1,4 +1,5 @@
 import { inject, injectable } from "inversify";
+import 'reflect-metadata';
 import { Request, Response } from "express";
 import { PROJECT_TYPES } from '../../domain/types/index';
 import { StatusCodes } from "http-status-codes";

@@ -4,8 +4,8 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import { errorHandlerMiddleware } from "./common/middleware";
 import { projectRoutes } from "./features/projects";
-import { taskRoutes } from "./features/tasks";
-import { connectDB, corsConfig } from "./config";
+//import { authRoutes } from "./features/auth";
+import { connectDB, container, corsConfig } from "./config";
 
 
 dotenv.config();
@@ -18,7 +18,7 @@ app.use(express.json());
 app.use(morgan('dev'));
 
 app.use('/api/projects', projectRoutes);
-app.use('/api/tasks', taskRoutes);
+//app.use('/api/auth', authRoutes);
 app.use(errorHandlerMiddleware);
 
 export default app;

@@ -1,8 +1,8 @@
-let PROJECT_TYPES = {
-    ProjectRepository: 'ProjectRepository',
-    ProjectController: 'ProjectController',
-    ProjectMapper: 'ProjectMapper',
-    ProjectService: 'ProjectService'
+const PROJECT_TYPES = {
+    ProjectRepository:  Symbol.for('ProjectRepository'),
+    ProjectController:  Symbol.for('ProjectController'),
+    ProjectMapper:      Symbol.for('ProjectMapper'),
+    ProjectService:     Symbol.for('ProjectService')
 }
 
 export { PROJECT_TYPES };

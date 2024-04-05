@@ -1,6 +1,7 @@
+import { inject, injectable } from 'inversify';
+import 'reflect-metadata';
 import { StatusCodes } from 'http-status-codes';
 import { Request, Response } from 'express';
-import { inject, injectable } from 'inversify';
 import { TASK_TYPES } from '../../domain/types';
 import { TaskService } from '../service/TaskService';
 import { wrapResponse } from '../../../../common/response/apiResponse';

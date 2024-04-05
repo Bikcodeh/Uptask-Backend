@@ -1,5 +1,6 @@
-import { TaskStatus } from './../../domain/interface/index';
 import { inject, injectable } from 'inversify';
+import 'reflect-metadata';
+import { TaskStatus } from './../../domain/interface/index';
 import { ITaskRepository } from "../../domain/repository/TaskRepository";
 import { ITask } from '../../domain/interface';
 import { IProject, IProjectRepository, PROJECT_TYPES, ProjectMapper } from '../../../projects';

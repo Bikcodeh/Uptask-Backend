@@ -1,4 +1,3 @@
-import 'reflect-metadata';
 import 'express-async-errors';
 import colors from '@colors/colors';
 import server from './server';

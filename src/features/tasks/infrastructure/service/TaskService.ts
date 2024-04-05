@@ -1,4 +1,5 @@
 import { inject, injectable } from 'inversify';
+import 'reflect-metadata';
 import { TASK_TYPES } from '../../domain/types';
 import { ITaskRepository } from '../../domain/repository/TaskRepository';
 import { ITask } from '../../domain/interface';

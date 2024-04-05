@@ -6,7 +6,9 @@ const UserSchema: Schema = new Schema<IUserDocument>(
         email: {
             type: String,
             required: true,
-            trim: true
+            trim: true,
+            lowercase: true,
+            unique: true
         },
         password: {
             type: String,
@@ -20,8 +22,7 @@ const UserSchema: Schema = new Schema<IUserDocument>(
         },
         confirmed: {
             type: Boolean,
-            required: true,
-            trim: true
+            default: false
         }
     },
     {

@@ -1,4 +1,5 @@
 import { inject, injectable } from 'inversify';
+import 'reflect-metadata';
 import { PROJECT_TYPES } from '../../domain/types';
 import { IProjectRepository } from '../../domain/repository/ProjectRepository';
 import { IProject } from '../../domain/interface';

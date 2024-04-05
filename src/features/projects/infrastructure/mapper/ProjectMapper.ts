@@ -1,4 +1,5 @@
 import { injectable } from 'inversify';
+import 'reflect-metadata';
 import { Document } from 'mongoose';
 import { IProject, IProjectDocument } from '../../domain/interface';
 import { ITaskDocument, TaskMapper } from '../../../tasks';
