@@ -1,8 +1,8 @@
 import { inject, injectable } from "inversify";
 import 'reflect-metadata';
+import { StatusCodes } from "http-status-codes";
 import { Request, Response } from "express";
 import { PROJECT_TYPES } from '../../domain/types/index';
-import { StatusCodes } from "http-status-codes";
 import { ProjectService } from "../service/ProjectService";
 import { wrapResponse } from "../../../../common/response/apiResponse";
 
