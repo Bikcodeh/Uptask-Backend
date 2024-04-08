@@ -1,3 +1,4 @@
+import { AuthMapper } from './../features/auth/infrastructure/mapper/AuthMapper';
 import { Container } from 'inversify';
 import {
     IProjectRepository,
@@ -41,5 +42,6 @@ container.bind<TaskService>(TASK_TYPES.TaskService).to(TaskService);
 container.bind<AuthController>(AUTH_TYPES.AuthController).to(AuthController);
 container.bind<IAuthRepository>(AUTH_TYPES.AuthRepository).to(AuthRepositoryMongo);
 container.bind<AuthService>(AUTH_TYPES.AuthService).to(AuthService);
+container.bind<AuthMapper>(AUTH_TYPES.AuthMapper).to(AuthMapper);
 
 export { container };

@@ -1,10 +1,15 @@
 import { Document } from "mongoose";
 
 export interface IUser {
+    userId: string;
     email: string;
     password: string;
     name: string;
     confirmed: boolean;
+}
+
+export interface UserBody extends Pick<IUser, 'email' | 'name' | 'password'> {
+    confirmed_password: string;
 }
 
 export interface IUserDocument extends IUser, Document { }

@@ -14,8 +14,8 @@ export class AuthController {
     ) { }
 
     createAccount = async (req: Request, res: Response) => {
-        //const projects = await this.projectService.getProjects();
-        res.status(StatusCodes.OK).json(wrapResponse({ msg: 'desde auth' }))
+        const user = await this.authService.createAccount(req.body);
+        res.status(StatusCodes.OK).json(wrapResponse({ msg: 'Create Successfuly', data: user }));
      }
 
 }
