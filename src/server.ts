@@ -3,7 +3,7 @@ import morgan from 'morgan';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import { errorHandlerMiddleware } from "./common/middleware";
-import { connectDB, container, corsConfig } from "./config";
+import { connectDB, corsConfig } from "./config";
 import { projectRoutes } from "./features/projects/infrastructure/routes/projectRoutes";
 import { authRoutes } from "./features/auth/infrastructure/routes/authRoutes";
 

@@ -12,10 +12,18 @@ export class AuthRepositoryMongo implements IAuthRepository {
 
     constructor(@inject(AUTH_TYPES.AuthMapper) private authMapper: AuthMapper) { }
 
-    async createAccount(data: UserBody): Promise<IUser> {
+    async createAccount(data: UserBody): Promise<IUser | null> {
+
+        const userExist = await this.userExist(data.email);
+        if (userExist) return null;
+
         const user = new User(data);
         user.password = await hashPassword(data.password);
         const saved = await user.save();
         return this.authMapper.toIUser(saved);
     }
+
+    async userExist(email: string): Promise<boolean> {
+        return !!(await User.findOne({ email }));
+    }    
 }

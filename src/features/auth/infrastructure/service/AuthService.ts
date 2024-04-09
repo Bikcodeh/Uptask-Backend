@@ -3,6 +3,7 @@ import 'reflect-metadata';
 import { IUser, UserBody } from '../../domain/interface';
 import { AUTH_TYPES } from '../../domain/types';
 import { IAuthRepository } from '../../domain/repository/AuthRepository';
+import { EmailRegisteredException } from '../../../../common/exception';
 
 @injectable()
 export class AuthService {
@@ -13,6 +14,7 @@ export class AuthService {
 
     async createAccount(data: UserBody): Promise<IUser> {
         const user = await this.authRepository.createAccount(data);
+        if (!user) throw new EmailRegisteredException()
         return user;
     }
 }
