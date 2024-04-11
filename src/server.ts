@@ -7,8 +7,6 @@ import { connectDB, corsConfig } from "./config";
 import { projectRoutes } from "./features/projects/infrastructure/routes/projectRoutes";
 import { authRoutes } from "./features/auth/infrastructure/routes/authRoutes";
 
-
-
 dotenv.config();
 
 connectDB();

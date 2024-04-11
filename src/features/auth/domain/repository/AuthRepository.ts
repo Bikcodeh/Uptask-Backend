@@ -1,5 +1,5 @@
-import { IUser, UserBody } from "../interface";
+import { IUserCreated, UserBody } from './../interface';
 
 export interface IAuthRepository {
-    createAccount(data: UserBody): Promise<IUser | null>
+    createAccount(data: UserBody): Promise<IUserCreated | null>
 }

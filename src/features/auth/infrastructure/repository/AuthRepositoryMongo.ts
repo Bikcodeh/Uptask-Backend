@@ -2,7 +2,7 @@ import { hashPassword, generateToken } from './../../../../utils';
 import { inject, injectable } from 'inversify';
 import 'reflect-metadata';
 import { IAuthRepository } from "../../domain/repository/AuthRepository";
-import { IUser, UserBody } from '../../domain/interface';
+import { IUserCreated, UserBody } from '../../domain/interface';
 import { AUTH_TYPES } from '../../domain/types';
 import { AuthMapper } from '../mapper/AuthMapper';
 import { User } from '../../domain/model/User';
@@ -13,7 +13,7 @@ export class AuthRepositoryMongo implements IAuthRepository {
 
     constructor(@inject(AUTH_TYPES.AuthMapper) private authMapper: AuthMapper) { }
 
-    async createAccount(data: UserBody): Promise<IUser | null> {
+    async createAccount(data: UserBody): Promise<IUserCreated | null> {
 
         const userExist = await this.userExist(data.email);
         if (userExist) return null;
@@ -24,8 +24,11 @@ export class AuthRepositoryMongo implements IAuthRepository {
         token.token = generateToken()
         token.user = user._id;
         const saved = await user.save();
-        await token.save();
-        return this.authMapper.toIUser(saved);
+        const savedToken = await token.save();
+        return {
+            user: this.authMapper.toIUser(saved),
+            token: this.authMapper.toIToken(savedToken)
+        };
     }
 
     async userExist(email: string): Promise<boolean> {

@@ -3,7 +3,7 @@ import mongoose, { Document } from "mongoose";
 export interface IUser {
     userId: string;
     email: string;
-    password: string;
+    password?: string;
     name: string;
     confirmed: boolean;
 }
@@ -21,3 +21,8 @@ export interface IToken {
 }
 
 export interface ITokenDocument extends IToken, Document { }
+
+export interface IUserCreated {
+    user: IUser;
+    token: IToken;
+}
