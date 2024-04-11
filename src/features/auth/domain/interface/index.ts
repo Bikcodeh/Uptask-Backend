@@ -1,4 +1,4 @@
-import { Document } from "mongoose";
+import mongoose, { Document } from "mongoose";
 
 export interface IUser {
     userId: string;
@@ -13,3 +13,11 @@ export interface UserBody extends Pick<IUser, 'email' | 'name' | 'password'> {
 }
 
 export interface IUserDocument extends IUser, Document { }
+
+export interface IToken {
+    token: string;
+    user: IUser;
+    createdAt: Date;
+}
+
+export interface ITokenDocument extends IToken, Document { }
