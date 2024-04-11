@@ -1,4 +1,4 @@
-import { hashPassword } from './../../../../utils/index';
+import { hashPassword, generateToken } from './../../../../utils';
 import { inject, injectable } from 'inversify';
 import 'reflect-metadata';
 import { IAuthRepository } from "../../domain/repository/AuthRepository";
@@ -6,6 +6,7 @@ import { IUser, UserBody } from '../../domain/interface';
 import { AUTH_TYPES } from '../../domain/types';
 import { AuthMapper } from '../mapper/AuthMapper';
 import { User } from '../../domain/model/User';
+import { Token } from '../../domain/model/Token';
 
 @injectable()
 export class AuthRepositoryMongo implements IAuthRepository {
@@ -19,7 +20,11 @@ export class AuthRepositoryMongo implements IAuthRepository {
 
         const user = new User(data);
         user.password = await hashPassword(data.password);
+        const token = new Token()
+        token.token = generateToken()
+        token.user = user._id;
         const saved = await user.save();
+        await token.save();
         return this.authMapper.toIUser(saved);
     }
 
