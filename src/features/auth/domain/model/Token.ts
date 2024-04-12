@@ -18,4 +18,11 @@ const tokenSchema: Schema = new Schema<ITokenDocument>({
 })
 
 const Token = mongoose.model<ITokenDocument>('Token', tokenSchema);
+
+export enum TOKEN_STATE {
+    TOKEN_NOT_EXIST,
+    USER_NOT_EXIST,
+    SUCCESS
+}
+
 export { Token };

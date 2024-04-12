@@ -23,4 +23,11 @@ authRoutes.post(
     authController.createAccount
 );
 
+authRoutes.post(
+    '/confirm-account',
+    body('token').notEmpty().withMessage('Token is empty'),
+    handleInputErrors,
+    authController.confirmAccount
+)
+
 export { authRoutes };

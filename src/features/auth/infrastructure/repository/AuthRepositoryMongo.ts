@@ -1,3 +1,4 @@
+import { TOKEN_STATE } from './../../domain/model/Token';
 import { hashPassword, generateToken } from './../../../../utils';
 import { inject, injectable } from 'inversify';
 import 'reflect-metadata';
@@ -12,6 +13,16 @@ import { Token } from '../../domain/model/Token';
 export class AuthRepositoryMongo implements IAuthRepository {
 
     constructor(@inject(AUTH_TYPES.AuthMapper) private authMapper: AuthMapper) { }
+
+    async confirmAccount(token: string): Promise<TOKEN_STATE> {
+        const tokenModel = await Token.findOne({token});
+        if (!tokenModel) return TOKEN_STATE.TOKEN_NOT_EXIST;
+        const user = await User.findById(tokenModel.user)
+        if (!user) return TOKEN_STATE.USER_NOT_EXIST;
+        user.confirmed = true;
+        await Promise.allSettled([user.save(), tokenModel.deleteOne()])
+        return TOKEN_STATE.SUCCESS
+    }
 
     async createAccount(data: UserBody): Promise<IUserCreated | null> {
 
