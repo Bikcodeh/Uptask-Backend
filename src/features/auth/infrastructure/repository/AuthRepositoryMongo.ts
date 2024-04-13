@@ -1,9 +1,8 @@
-import { TOKEN_STATE } from './../../domain/model/Token';
 import { hashPassword, generateToken } from './../../../../utils';
 import { inject, injectable } from 'inversify';
 import 'reflect-metadata';
 import { IAuthRepository } from "../../domain/repository/AuthRepository";
-import { IUserCreated, UserBody } from '../../domain/interface';
+import { IToken, IUser, IUserCreated, UserBody } from '../../domain/interface';
 import { AUTH_TYPES } from '../../domain/types';
 import { AuthMapper } from '../mapper/AuthMapper';
 import { User } from '../../domain/model/User';
@@ -14,14 +13,18 @@ export class AuthRepositoryMongo implements IAuthRepository {
 
     constructor(@inject(AUTH_TYPES.AuthMapper) private authMapper: AuthMapper) { }
 
-    async confirmAccount(token: string): Promise<TOKEN_STATE> {
-        const tokenModel = await Token.findOne({token});
-        if (!tokenModel) return TOKEN_STATE.TOKEN_NOT_EXIST;
+    async doLogin(email: string, password: string): Promise<boolean> {
+        const user = await User.findOne({ email });
+        return false;
+
+    }
+
+    async confirmAccount(token: string): Promise<boolean> {
+        const tokenModel = await Token.findOne({ token });
         const user = await User.findById(tokenModel.user)
-        if (!user) return TOKEN_STATE.USER_NOT_EXIST;
         user.confirmed = true;
         await Promise.allSettled([user.save(), tokenModel.deleteOne()])
-        return TOKEN_STATE.SUCCESS
+        return true
     }
 
     async createAccount(data: UserBody): Promise<IUserCreated | null> {
@@ -42,7 +45,30 @@ export class AuthRepositoryMongo implements IAuthRepository {
         };
     }
 
-    async userExist(email: string): Promise<boolean> {
-        return !!(await User.findOne({ email }));
-    }    
+    async createConfirmation(email: string): Promise<IToken> {
+        const user = await User.findOne({ email });
+        const token = new Token()
+        token.token = generateToken()
+        token.user = user._id;
+        await user.save();
+        const savedToken = await token.save();
+        return this.authMapper.toIToken(savedToken);
+    }
+
+    async userExist(email: string): Promise<IUser> {
+        const user = await User.findOne({ email });
+        if (!user) {
+            return null
+        }
+        return this.authMapper.toIUser(user);
+    }
+
+    async userExistByToken(token: string): Promise<boolean> {
+        const tokenModel = await Token.findOne({ token });
+        return (!!(await User.findById(tokenModel.user)))
+    }
+
+    async tokenExist(token: string): Promise<boolean> {
+        return !!(await Token.findOne({ token }));
+    }
 }

@@ -6,3 +6,5 @@ export * from './ForbiddenException';
 export * from './EmailRegisteredexception';
 export * from './TokenNotExistException';
 export * from './UserNotFoundException';
+export * from './UserNotConfirmedException';
+export * from './InvalidCredentialsException';

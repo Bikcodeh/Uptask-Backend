@@ -3,9 +3,9 @@ import 'reflect-metadata';
 import { IUser, UserBody } from '../../domain/interface';
 import { AUTH_TYPES } from '../../domain/types';
 import { IAuthRepository } from '../../domain/repository/AuthRepository';
-import { EmailRegisteredException, TokenNotExistException, UserNotFoundException } from '../../../../common/exception';
+import { EmailRegisteredException, InvalidCredentialsException, TokenNotExistException, UserNotConfirmedException, UserNotFoundException } from '../../../../common/exception';
 import { AuthEmail } from '../../../../emails/AuthEmail';
-import { TOKEN_STATE } from '../../domain/model/Token';
+import { checkPassword } from './../../../../utils';
 
 @injectable()
 export class AuthService {
@@ -26,16 +26,35 @@ export class AuthService {
     }
 
     async confirmAccount(token: string): Promise<boolean> {
-        const tokenState = await this.authRepository.confirmAccount(token);
-        switch (tokenState) {
-            case TOKEN_STATE.TOKEN_NOT_EXIST:
-                throw new TokenNotExistException()
-            case TOKEN_STATE.USER_NOT_EXIST:
-                throw new UserNotFoundException()
-            case TOKEN_STATE.SUCCESS:
-                return true
-            default:
-                return false
+        if (!await this.authRepository.tokenExist(token)) {
+            throw new TokenNotExistException()
         }
+        if (!await this.authRepository.userExistByToken(token)) {
+            throw new UserNotFoundException()
+        }
+        return await this.authRepository.confirmAccount(token);
+    }
+
+    async doLogin(email: string, password: string) {
+        const user = await this.authRepository.userExist(email)
+        if (!user) {
+            throw new UserNotFoundException()
+        }
+
+        if (!user.confirmed) {
+            const token = await this.authRepository.createConfirmation(email)
+            await AuthEmail.sendConfirmationEmail({
+                email: user.email,
+                token: token.token,
+                name: user.name
+            });
+            throw new UserNotConfirmedException();
+        }
+
+        const correctPassword = await checkPassword(password, user.password);
+        if(!correctPassword) {
+            throw new InvalidCredentialsException();
+        }
+        return true;
     }
 }

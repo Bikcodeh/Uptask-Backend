@@ -3,7 +3,7 @@ import mongoose, { Document } from "mongoose";
 export interface IUser {
     userId: string;
     email: string;
-    password?: string;
+    password: string;
     name: string;
     confirmed: boolean;
 }

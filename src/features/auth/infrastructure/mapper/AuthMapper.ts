@@ -7,7 +7,7 @@ import { IToken, ITokenDocument, IUser, IUserDocument } from '../../domain/inter
 export class AuthMapper {
 
     toIUser(userDocument: IUserDocument): IUser {
-        const { _id, __v, password, ...userData } = userDocument.toObject();
+        const { _id, __v, ...userData } = userDocument.toObject();
         const user = userData as IUser;
         user.userId = _id.toString();
         return user;
