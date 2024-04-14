@@ -38,5 +38,12 @@ authRoutes.post(
     authController.login
 )
 
+authRoutes.post(
+    '/request-code',
+    body('email').isEmail().notEmpty().withMessage('Email is required'),
+    handleInputErrors,
+    authController.requestCode
+)
+
 
 export { authRoutes };

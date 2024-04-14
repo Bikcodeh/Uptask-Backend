@@ -8,4 +8,5 @@ export interface IAuthRepository {
     tokenExist(token: string): Promise<boolean>
     userExistByToken(token: string): Promise<boolean>
     createConfirmation(email: string): Promise<IToken>
+    generateToken(email: string): Promise<IToken>
 }

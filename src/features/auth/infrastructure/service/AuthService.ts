@@ -3,7 +3,7 @@ import 'reflect-metadata';
 import { IUser, UserBody } from '../../domain/interface';
 import { AUTH_TYPES } from '../../domain/types';
 import { IAuthRepository } from '../../domain/repository/AuthRepository';
-import { EmailRegisteredException, InvalidCredentialsException, TokenNotExistException, UserNotConfirmedException, UserNotFoundException } from '../../../../common/exception';
+import { EmailRegisteredException, InvalidCredentialsException, TokenNotExistException, UserAlreadyConfirmedException, UserNotConfirmedException, UserNotFoundException } from '../../../../common/exception';
 import { AuthEmail } from '../../../../emails/AuthEmail';
 import { checkPassword } from './../../../../utils';
 
@@ -52,9 +52,27 @@ export class AuthService {
         }
 
         const correctPassword = await checkPassword(password, user.password);
-        if(!correctPassword) {
+        if (!correctPassword) {
             throw new InvalidCredentialsException();
         }
+        return true;
+    }
+
+    async requestCode(email: string) {
+        const user = await this.authRepository.userExist(email)
+        if (!user) {
+            throw new UserNotFoundException()
+        }
+
+        if (user.confirmed) {
+            throw new UserAlreadyConfirmedException()
+        }
+        const token = await this.authRepository.generateToken(email);
+        await AuthEmail.sendConfirmationEmail({
+            email: user.email,
+            token: token.token,
+            name: user.name
+        });
         return true;
     }
 }

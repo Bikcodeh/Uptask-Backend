@@ -36,4 +36,13 @@ export class AuthController {
         }
     }
 
+    requestCode = async (req: Request, res: Response) => {
+        const success = await this.authService.requestCode(req.body.email)
+        if (success) {
+            res.status(StatusCodes.OK).json(wrapResponse({ msg: 'We have sent you an email with a code to confirm your account' }));
+        } else {
+            res.status(StatusCodes.BAD_REQUEST).json(wrapResponse({ msg: 'An error happened trying to request a confirmation code, please try again later', success: false }));
+        }
+    }
+
 }

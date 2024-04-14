@@ -8,3 +8,4 @@ export * from './TokenNotExistException';
 export * from './UserNotFoundException';
 export * from './UserNotConfirmedException';
 export * from './InvalidCredentialsException';
+export * from './UserAlreadyConfirmedException';
