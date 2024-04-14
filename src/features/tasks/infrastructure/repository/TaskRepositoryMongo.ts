@@ -33,7 +33,6 @@ export class TaskRepositoryMongo implements ITaskRepository {
     }
 
     async deleteTask(task: ITask, projectId: string): Promise<boolean> {
-        console.log(task, projectId)
         const taskDocument = await Task.findById(task.taskId);
         
         const deleted = await this.projectRepository.deleteTask(projectId, task.taskId);
