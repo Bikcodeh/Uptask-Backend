@@ -33,7 +33,7 @@ authRoutes.post(
 authRoutes.post(
     '/login',
     body('email').isEmail().notEmpty().withMessage('Email is required'),
-    body('password').isLength({ min: 8 }).withMessage('password is too short, at least 8 characters'),
+    body('password').notEmpty().withMessage('password is required'),
     handleInputErrors,
     authController.login
 )
