@@ -75,4 +75,19 @@ export class AuthService {
         });
         return true;
     }
+
+    async forgotPassword(email: string) {
+        const user = await this.authRepository.userExist(email)
+        if (!user) {
+            throw new UserNotFoundException()
+        }
+
+        const token = await this.authRepository.generateToken(email);
+        await AuthEmail.sendForgotPasswordEmail({
+            email: user.email,
+            token: token.token,
+            name: user.name
+        });
+        return true;
+    }
 }

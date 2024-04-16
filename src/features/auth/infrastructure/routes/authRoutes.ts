@@ -45,5 +45,12 @@ authRoutes.post(
     authController.requestCode
 )
 
+authRoutes.post(
+    '/forgot-password',
+    body('email').isEmail().notEmpty().withMessage('Email is required'),
+    handleInputErrors,
+    authController.forgotPassword
+)
+
 
 export { authRoutes };

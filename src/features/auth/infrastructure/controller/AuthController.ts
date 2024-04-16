@@ -5,6 +5,7 @@ import 'reflect-metadata';
 import { AUTH_TYPES } from '../../domain/types';
 import { AuthService } from '../service/AuthService';
 import { wrapResponse } from '../../../../common/response/apiResponse';
+import { CustomException } from '../../../../common/exception';
 
 @injectable()
 export class AuthController {
@@ -42,6 +43,16 @@ export class AuthController {
             res.status(StatusCodes.OK).json(wrapResponse({ msg: 'We have sent you an email with a code to confirm your account' }));
         } else {
             res.status(StatusCodes.BAD_REQUEST).json(wrapResponse({ msg: 'An error happened trying to request a confirmation code, please try again later', success: false }));
+        }
+    }
+
+
+    forgotPassword = async (req: Request, res: Response) => {
+        const success = await this.authService.forgotPassword(req.body.email)
+        if (success) {
+            res.status(StatusCodes.OK).json(wrapResponse({ msg: 'We have sent you an email with instructions' }));
+        } else {
+            throw new CustomException()
         }
     }
 
