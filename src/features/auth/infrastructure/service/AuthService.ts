@@ -35,7 +35,7 @@ export class AuthService {
         return await this.authRepository.confirmAccount(token);
     }
 
-    async doLogin(email: string, password: string) {
+    async doLogin(email: string, password: string): Promise<boolean> {
         const user = await this.authRepository.userExist(email)
         if (!user) {
             throw new UserNotFoundException()
@@ -58,7 +58,7 @@ export class AuthService {
         return true;
     }
 
-    async requestCode(email: string) {
+    async requestCode(email: string): Promise<boolean> {
         const user = await this.authRepository.userExist(email)
         if (!user) {
             throw new UserNotFoundException()
@@ -76,7 +76,7 @@ export class AuthService {
         return true;
     }
 
-    async forgotPassword(email: string) {
+    async forgotPassword(email: string): Promise<boolean> {
         const user = await this.authRepository.userExist(email)
         if (!user) {
             throw new UserNotFoundException()
@@ -89,5 +89,14 @@ export class AuthService {
             name: user.name
         });
         return true;
+    }
+
+    async validateToken(token: string): Promise<boolean> {
+        const tokenExist = await this.authRepository.userExistByToken(token);
+        if (tokenExist) {
+            return true;
+        } else {
+            throw new TokenNotExistException()
+        }
     }
 }

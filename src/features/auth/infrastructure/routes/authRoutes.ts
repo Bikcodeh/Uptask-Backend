@@ -52,5 +52,12 @@ authRoutes.post(
     authController.forgotPassword
 )
 
+authRoutes.post(
+    '/validate-token',
+    body('token').notEmpty().withMessage('Token is empty'),
+    handleInputErrors,
+    authController.validateToken
+)
+
 
 export { authRoutes };

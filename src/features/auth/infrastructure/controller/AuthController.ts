@@ -56,4 +56,14 @@ export class AuthController {
         }
     }
 
+
+    validateToken = async (req: Request, res: Response) => {
+        const confirmed = await this.authService.validateToken(req.body.token);
+        if (confirmed) {
+            res.status(StatusCodes.OK).json(wrapResponse({ msg: 'Reset your passwword' }));
+        } else {
+            res.status(StatusCodes.BAD_REQUEST).json(wrapResponse({ msg: 'An error happened trying to validate the token, please try again later', success: false }));
+        }
+    }
+
 }

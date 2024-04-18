@@ -73,6 +73,7 @@ export class AuthRepositoryMongo implements IAuthRepository {
 
     async userExistByToken(token: string): Promise<boolean> {
         const tokenModel = await Token.findOne({ token });
+        if (!tokenModel) return false;
         return (!!(await User.findById(tokenModel.user)))
     }
 
