@@ -27,10 +27,10 @@ export class AuthService {
 
     async confirmAccount(token: string): Promise<boolean> {
         if (!await this.authRepository.tokenExist(token)) {
-            throw new TokenNotExistException()
+            throw new TokenNotExistException();
         }
         if (!await this.authRepository.userExistByToken(token)) {
-            throw new UserNotFoundException()
+            throw new UserNotFoundException();
         }
         return await this.authRepository.confirmAccount(token);
     }
@@ -38,7 +38,7 @@ export class AuthService {
     async doLogin(email: string, password: string): Promise<boolean> {
         const user = await this.authRepository.userExist(email)
         if (!user) {
-            throw new UserNotFoundException()
+            throw new UserNotFoundException();
         }
 
         if (!user.confirmed) {
@@ -61,11 +61,11 @@ export class AuthService {
     async requestCode(email: string): Promise<boolean> {
         const user = await this.authRepository.userExist(email)
         if (!user) {
-            throw new UserNotFoundException()
+            throw new UserNotFoundException();
         }
 
         if (user.confirmed) {
-            throw new UserAlreadyConfirmedException()
+            throw new UserAlreadyConfirmedException();
         }
         const token = await this.authRepository.generateToken(email);
         await AuthEmail.sendConfirmationEmail({
@@ -79,7 +79,7 @@ export class AuthService {
     async forgotPassword(email: string): Promise<boolean> {
         const user = await this.authRepository.userExist(email)
         if (!user) {
-            throw new UserNotFoundException()
+            throw new UserNotFoundException();
         }
 
         const token = await this.authRepository.generateToken(email);
@@ -96,7 +96,16 @@ export class AuthService {
         if (tokenExist) {
             return true;
         } else {
-            throw new TokenNotExistException()
+            throw new TokenNotExistException();
+        }
+    }
+
+    async updatePasswordByToken(token: string, password: string): Promise<boolean> {
+        const userExist = await this.authRepository.userExistByToken(token);
+        if (userExist) {
+            return await this.authRepository.updatePassword(token, password);
+        } else {
+            throw new TokenNotExistException();
         }
     }
 }

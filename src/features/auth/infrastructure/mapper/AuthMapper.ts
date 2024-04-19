@@ -18,4 +18,10 @@ export class AuthMapper {
         const token = tokenData as IToken;
         return token;
     }
+
+    toIUserDocument(user: IUser): IUserDocument {
+        return {
+          ...user
+        } as IUserDocument;
+    }
 }

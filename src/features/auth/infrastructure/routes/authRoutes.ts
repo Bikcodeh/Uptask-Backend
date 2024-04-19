@@ -59,5 +59,19 @@ authRoutes.post(
     authController.validateToken
 )
 
+authRoutes.post(
+    '/update-password/:token',
+    param('token').isNumeric().withMessage('Token no valid'),
+    body('password').isLength({ min: 8 }).withMessage('password is too short, at least 8 characters'),
+    body('password_confirmation').custom((value, { req }) => {
+        if (value !== req.body.password) {
+            throw new Error('Password does not match')
+        }
+        return true
+    }),
+    handleInputErrors,
+    authController.updatePasswordWithToken
+)
+
 
 export { authRoutes };

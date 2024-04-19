@@ -13,6 +13,14 @@ export class AuthRepositoryMongo implements IAuthRepository {
 
     constructor(@inject(AUTH_TYPES.AuthMapper) private authMapper: AuthMapper) { }
 
+    async updatePassword(token: string, password: string): Promise<boolean> {
+        const tokenModel = await Token.findOne({ token });
+        const userModel = await User.findById(tokenModel.user);
+        userModel.password = await hashPassword(password);
+        await Promise.allSettled([userModel.save(), tokenModel.deleteOne()]);
+        return true;
+    }
+
     async generateToken(email: string): Promise<IToken> {
         const user = await User.findOne({ email });
         const token = new Token();
@@ -71,13 +79,17 @@ export class AuthRepositoryMongo implements IAuthRepository {
         return this.authMapper.toIUser(user);
     }
 
-    async userExistByToken(token: string): Promise<boolean> {
+    async userExistByToken(token: string): Promise<IUser> {
         const tokenModel = await Token.findOne({ token });
-        if (!tokenModel) return false;
-        return (!!(await User.findById(tokenModel.user)))
+        if (!tokenModel) return null;
+        const user = await User.findById(tokenModel.user);
+        if (!user) return null;
+        return this.authMapper.toIUser(user);
     }
 
-    async tokenExist(token: string): Promise<boolean> {
-        return !!(await Token.findOne({ token }));
+    async tokenExist(token: string): Promise<IToken> {
+        const tokenModel = await Token.findOne({ token })
+        if (!tokenModel) return null;
+        return this.authMapper.toIToken(tokenModel);
     }
 }

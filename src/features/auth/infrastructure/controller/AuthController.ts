@@ -66,4 +66,13 @@ export class AuthController {
         }
     }
 
+    updatePasswordWithToken = async (req: Request, res: Response) => {
+        const sucess = await this.authService.updatePasswordByToken(req.params.token, req.body.password)
+        if (sucess) {
+            res.status(StatusCodes.OK).json(wrapResponse({ msg: 'Password updated' }));
+        } else {
+            res.status(StatusCodes.BAD_REQUEST).json(wrapResponse({ msg: 'An error happened trying to update password, please try again later', success: false }));
+        }
+    }
+
 }
