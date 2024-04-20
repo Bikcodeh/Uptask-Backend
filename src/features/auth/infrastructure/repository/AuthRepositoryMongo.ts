@@ -29,10 +29,10 @@ export class AuthRepositoryMongo implements IAuthRepository {
         return this.authMapper.toIToken(await token.save())
     }
 
-    async doLogin(email: string, password: string): Promise<boolean> {
-        const user = await User.findOne({ email });
-        return false;
-
+    async doLogin(email: string, password: string): Promise<IUser | null> {
+        const user = await User.findOne({ email, password });
+        if (!user) return null;
+        return this.authMapper.toIUser(user);
     }
 
     async confirmAccount(token: string): Promise<boolean> {

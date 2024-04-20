@@ -36,7 +36,7 @@ export class AuthService {
     }
 
     async doLogin(email: string, password: string): Promise<boolean> {
-        const user = await this.authRepository.userExist(email)
+        const user = await this.authRepository.doLogin(email, password)
         if (!user) {
             throw new UserNotFoundException();
         }
