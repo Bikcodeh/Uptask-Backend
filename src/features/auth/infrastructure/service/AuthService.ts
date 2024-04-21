@@ -1,6 +1,7 @@
+import { generateJWT } from './../../../../utils/index';
 import { inject, injectable } from 'inversify';
 import 'reflect-metadata';
-import { IUser, UserBody } from '../../domain/interface';
+import { IUser, IUserSimple, UserBody } from '../../domain/interface';
 import { AUTH_TYPES } from '../../domain/types';
 import { IAuthRepository } from '../../domain/repository/AuthRepository';
 import { EmailRegisteredException, InvalidCredentialsException, TokenNotExistException, UserAlreadyConfirmedException, UserNotConfirmedException, UserNotFoundException } from '../../../../common/exception';
@@ -35,7 +36,7 @@ export class AuthService {
         return await this.authRepository.confirmAccount(token);
     }
 
-    async doLogin(email: string, password: string): Promise<boolean> {
+    async doLogin(email: string, password: string): Promise<string | null> {
         const user = await this.authRepository.doLogin(email, password)
         if (!user) {
             throw new UserNotFoundException();
@@ -55,7 +56,7 @@ export class AuthService {
         if (!correctPassword) {
             throw new InvalidCredentialsException();
         }
-        return true;
+        return generateJWT({id: user.userId});
     }
 
     async requestCode(email: string): Promise<boolean> {
@@ -107,5 +108,9 @@ export class AuthService {
         } else {
             throw new TokenNotExistException();
         }
+    }
+
+    async userExistById(id: string): Promise<IUserSimple | null> {
+        return await this.authRepository.userExistById(id);
     }
 }

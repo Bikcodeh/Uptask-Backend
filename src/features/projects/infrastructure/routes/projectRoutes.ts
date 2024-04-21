@@ -1,5 +1,5 @@
 import { container } from "../../../../config/di";
-import { handleInputErrors } from '../../../../common/middleware/validatorMiddleware';
+import { handleInputErrors, authenticateMiddleware } from '../../../../common/middleware';
 import { Router } from "express";
 import { body, param } from 'express-validator';
 import { ProjectController } from '../controller/ProjectController';
@@ -20,6 +20,7 @@ projectRoutes.get('/:id',
 );
 
 projectRoutes.post('/',
+    authenticateMiddleware,
     body('projectName').notEmpty().withMessage('ProjectName is required'),
     body('clientName').notEmpty().withMessage('ClientName is required'),
     body('description').notEmpty().withMessage('Description is required'),

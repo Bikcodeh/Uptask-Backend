@@ -20,4 +20,5 @@ export const errorHandlerMiddleware = (
         msg: 'Internal server error'
       }));
   }
+  next();
 }

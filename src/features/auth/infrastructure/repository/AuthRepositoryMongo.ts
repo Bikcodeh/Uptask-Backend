@@ -2,7 +2,7 @@ import { hashPassword, generateToken } from './../../../../utils';
 import { inject, injectable } from 'inversify';
 import 'reflect-metadata';
 import { IAuthRepository } from "../../domain/repository/AuthRepository";
-import { IToken, IUser, IUserCreated, UserBody } from '../../domain/interface';
+import { IToken, IUser, IUserCreated, IUserSimple, UserBody } from '../../domain/interface';
 import { AUTH_TYPES } from '../../domain/types';
 import { AuthMapper } from '../mapper/AuthMapper';
 import { User } from '../../domain/model/User';
@@ -12,6 +12,12 @@ import { Token } from '../../domain/model/Token';
 export class AuthRepositoryMongo implements IAuthRepository {
 
     constructor(@inject(AUTH_TYPES.AuthMapper) private authMapper: AuthMapper) { }
+
+    async userExistById(id: string): Promise<IUserSimple> {
+       const user = await User.findById(id);
+       if (!user) return null;
+       return this.authMapper.toIUserSimple(user);
+    }
 
     async updatePassword(token: string, password: string): Promise<boolean> {
         const tokenModel = await Token.findOne({ token });

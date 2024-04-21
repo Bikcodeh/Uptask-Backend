@@ -29,11 +29,11 @@ export class AuthController {
     }
 
     login = async (req: Request, res: Response) => {
-        const loginSuccess = await this.authService.doLogin(req.body.email, req.body.password);
-        if (loginSuccess) {
-            res.status(StatusCodes.OK).json(wrapResponse({ msg: 'Authenticated' }));
-        } else {
+        const token = await this.authService.doLogin(req.body.email, req.body.password);
+        if (!token) {
             res.status(StatusCodes.BAD_REQUEST).json(wrapResponse({ msg: 'An error happened trying to login, please try again later', success: false }));
+        } else {
+            res.status(StatusCodes.OK).json(wrapResponse({ msg: 'Authenticated', data: token }));
         }
     }
 

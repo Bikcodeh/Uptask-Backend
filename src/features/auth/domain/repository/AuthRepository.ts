@@ -1,4 +1,4 @@
-import { IToken, IUser, IUserCreated, UserBody } from './../interface';
+import { IToken, IUser, IUserCreated, IUserSimple, UserBody } from './../interface';
 
 export interface IAuthRepository {
     createAccount(data: UserBody): Promise<IUserCreated | null>
@@ -7,6 +7,7 @@ export interface IAuthRepository {
     userExist(email: string): Promise<IUser>
     tokenExist(token: string): Promise<IToken>
     userExistByToken(token: string): Promise<IUser>
+    userExistById(id: string): Promise<IUserSimple>
     createConfirmation(email: string): Promise<IToken>
     generateToken(email: string): Promise<IToken>
     updatePassword(token: string, password: string): Promise<boolean>
