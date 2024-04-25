@@ -1,7 +1,7 @@
 import { generateJWT } from './../../../../utils/index';
 import { inject, injectable } from 'inversify';
 import 'reflect-metadata';
-import { IUser, IUserSimple, UserBody } from '../../domain/interface';
+import { IUser, UserBody } from '../../domain/interface';
 import { AUTH_TYPES } from '../../domain/types';
 import { IAuthRepository } from '../../domain/repository/AuthRepository';
 import { EmailRegisteredException, InvalidCredentialsException, TokenNotExistException, UserAlreadyConfirmedException, UserNotConfirmedException, UserNotFoundException } from '../../../../common/exception';
@@ -110,7 +110,7 @@ export class AuthService {
         }
     }
 
-    async userExistById(id: string): Promise<IUserSimple | null> {
+    async userExistById(id: string): Promise<IUser | null> {
         return await this.authRepository.userExistById(id);
     }
 }

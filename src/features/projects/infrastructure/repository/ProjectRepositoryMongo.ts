@@ -1,6 +1,5 @@
 import { inject, injectable } from 'inversify';
 import 'reflect-metadata';
-import { IProjectDocument } from './../../domain/interface/index';
 import { IProject } from '../../domain/interface';
 import { IProjectRepository } from '../../domain/repository/ProjectRepository';
 import { Project } from '../../domain/model/Project';
@@ -8,6 +7,8 @@ import { PROJECT_TYPES } from '../../domain/types';
 import { ProjectMapper } from '../mapper/ProjectMapper';
 import { ITask, TASK_TYPES, TaskMapper } from '../../../tasks';
 import mongoose from 'mongoose';
+import { AUTH_TYPES, IUser } from '../../../auth';
+import { AuthMapper } from '../../../auth/infrastructure/mapper/AuthMapper';
 
 @injectable()
 export class ProjectRepositoryMongo implements IProjectRepository {
@@ -16,7 +17,9 @@ export class ProjectRepositoryMongo implements IProjectRepository {
         @inject(PROJECT_TYPES.ProjectMapper)
         private projectMapper: ProjectMapper,
         @inject(TASK_TYPES.TaskMapper)
-        private taskMapper: TaskMapper
+        private taskMapper: TaskMapper,
+        @inject(AUTH_TYPES.AuthMapper)
+        private authMapper: AuthMapper
     ) { }
 
 
@@ -57,13 +60,10 @@ export class ProjectRepositoryMongo implements IProjectRepository {
         return projects.map(p => this.projectMapper.toIProject(p, this.taskMapper));
     }
 
-    async createProject(data: IProject): Promise<IProject | null> {
-        try {
-            const project = new Project(data);
-            const saved = await project.save();
-            return this.projectMapper.toIProject(saved, this.taskMapper);
-        } catch (error) {
-            return null;
-        }
+    async createProject(data: IProject, user: IUser): Promise<IProject | null> {
+        const project = new Project(data);
+        project.manager = this.authMapper.toIUserDocument(user);
+        const saved = await project.save();
+        return this.projectMapper.toIProject(saved, this.taskMapper);
     }
 }

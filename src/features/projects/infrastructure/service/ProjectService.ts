@@ -1,10 +1,10 @@
+import { IUser } from './../../../auth/domain/interface/index';
 import { inject, injectable } from 'inversify';
 import 'reflect-metadata';
 import { PROJECT_TYPES } from '../../domain/types';
 import { IProjectRepository } from '../../domain/repository/ProjectRepository';
 import { IProject } from '../../domain/interface';
 import { CreatingException, DeleteException, NotFoundException } from '../../../../common/exception';
-import { ProjectMapper } from '../mapper/ProjectMapper';
 
 @injectable()
 export class ProjectService {
@@ -18,8 +18,8 @@ export class ProjectService {
         return project;
     }
 
-    async createProject(data: IProject): Promise<IProject> {
-        const project = await this.projectRepository.createProject(data);
+    async createProject(data: IProject, user: IUser): Promise<IProject> {
+        const project = await this.projectRepository.createProject(data, user);
         if (!project) throw new CreatingException();
         return project;
     }

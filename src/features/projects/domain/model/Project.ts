@@ -23,7 +23,11 @@ const ProjectSchema: Schema = new Schema<IProjectDocument>(
                 type: Types.ObjectId,
                 ref: 'Task'
             }
-        ]
+        ],
+        manager: {
+            type: Types.ObjectId,
+            ref: 'User'
+        }
     },
     {
         timestamps: true

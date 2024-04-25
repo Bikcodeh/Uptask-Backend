@@ -2,7 +2,7 @@ import { hashPassword, generateToken } from './../../../../utils';
 import { inject, injectable } from 'inversify';
 import 'reflect-metadata';
 import { IAuthRepository } from "../../domain/repository/AuthRepository";
-import { IToken, IUser, IUserCreated, IUserSimple, UserBody } from '../../domain/interface';
+import { IToken, IUser, IUserCreated, UserBody } from '../../domain/interface';
 import { AUTH_TYPES } from '../../domain/types';
 import { AuthMapper } from '../mapper/AuthMapper';
 import { User } from '../../domain/model/User';
@@ -13,10 +13,10 @@ export class AuthRepositoryMongo implements IAuthRepository {
 
     constructor(@inject(AUTH_TYPES.AuthMapper) private authMapper: AuthMapper) { }
 
-    async userExistById(id: string): Promise<IUserSimple> {
+    async userExistById(id: string): Promise<IUser> {
        const user = await User.findById(id);
        if (!user) return null;
-       return this.authMapper.toIUserSimple(user);
+       return this.authMapper.toIUser(user);
     }
 
     async updatePassword(token: string, password: string): Promise<boolean> {
@@ -36,7 +36,7 @@ export class AuthRepositoryMongo implements IAuthRepository {
     }
 
     async doLogin(email: string, password: string): Promise<IUser | null> {
-        const user = await User.findOne({ email, password });
+        const user = await User.findOne({ email });
         if (!user) return null;
         return this.authMapper.toIUser(user);
     }

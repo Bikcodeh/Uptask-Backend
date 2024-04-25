@@ -3,12 +3,12 @@ import jwt from 'jsonwebtoken';
 import { StatusCodes } from 'http-status-codes';
 import { wrapResponse } from '../response/apiResponse';
 import { container } from '../../config';
-import { AuthService, IUserSimple } from '../../features/auth';
+import { AuthService, IUser } from '../../features/auth';
 
 declare global {
     namespace Express {
         interface Request {
-            user?: IUserSimple
+            user?: IUser;
         }
     }
 }

@@ -8,8 +8,6 @@ export interface IUser {
     confirmed: boolean;
 }
 
-export type IUserSimple = Pick<IUser, 'userId' | 'name' | 'email'>
-
 export interface UserBody extends Pick<IUser, 'email' | 'name' | 'password'> {
     confirmed_password: string;
 }
