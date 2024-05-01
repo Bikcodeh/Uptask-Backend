@@ -4,7 +4,7 @@ import { IProject } from "../interface";
 
 export interface IProjectRepository {
     createProject(data: IProject, user: IUser): Promise<IProject | null>
-    getProjects(): Promise<IProject[]>
+    getProjects(userId: string): Promise<IProject[]>
     getProjectById(id: string): Promise<IProject | null>
     deleteProjectById(id: string): Promise<boolean>
     updateProject(id: string, data: IProject): Promise<IProject>

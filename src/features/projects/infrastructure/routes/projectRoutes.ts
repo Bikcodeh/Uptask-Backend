@@ -11,7 +11,7 @@ const projectRoutes = Router();
 const projectController = container.resolve(ProjectController);
 const tasksController = container.resolve(Taskcontroller);
 
-projectRoutes.get('/', projectController.getAllProjects);
+projectRoutes.get('/', authenticateMiddleware, projectController.getAllProjects);
 
 projectRoutes.get('/:id',
     param('id').isMongoId().withMessage('Invalid id'),

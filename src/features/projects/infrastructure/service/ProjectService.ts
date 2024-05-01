@@ -23,8 +23,8 @@ export class ProjectService {
         if (!project) throw new CreatingException();
         return project;
     }
-    async getProjects(): Promise<IProject[]> {
-        return await this.projectRepository.getProjects()
+    async getProjects(userId: string): Promise<IProject[]> {
+        return await this.projectRepository.getProjects(userId)
     }
 
     async deleteProjectById(id: string): Promise<void> {

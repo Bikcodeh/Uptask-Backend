@@ -15,7 +15,7 @@ export class ProjectController {
    ) { }
 
    getAllProjects = async (req: Request, res: Response) => {
-      const projects = await this.projectService.getProjects();
+      const projects = await this.projectService.getProjects(req.user.userId);
       return res.status(StatusCodes.OK).json(wrapResponse({ data: projects }))
    }
 

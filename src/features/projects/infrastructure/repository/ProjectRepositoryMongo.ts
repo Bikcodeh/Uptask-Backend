@@ -55,8 +55,12 @@ export class ProjectRepositoryMongo implements IProjectRepository {
         return this.projectMapper.toIProject(await project.populate('tasks'), this.taskMapper);
     }
 
-    async getProjects(): Promise<IProject[]> {
-        const projects = await Project.find({}).populate('tasks');
+    async getProjects(userId: string): Promise<IProject[]> {
+        const projects = await Project.find({
+            $or: [
+                { manager: { $in: userId } }
+            ]
+        }).populate('tasks');
         return projects.map(p => this.projectMapper.toIProject(p, this.taskMapper));
     }
 
