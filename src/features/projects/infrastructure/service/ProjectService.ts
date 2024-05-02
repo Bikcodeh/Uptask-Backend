@@ -16,8 +16,6 @@ export class ProjectService {
 
     async getProjectById(projectId, userId: string): Promise<IProject> {
         const project = await this.validateProjectExist(projectId);
-        console.log(project.manager.userId)
-        console.log(userId)
         if (project.manager.userId !== userId) {
             throw new ForbiddenException()
         }
