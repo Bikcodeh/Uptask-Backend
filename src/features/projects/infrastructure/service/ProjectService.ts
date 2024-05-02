@@ -1,3 +1,4 @@
+import { ForbiddenException } from './../../../../common/exception/ForbiddenException';
 import { IUser } from './../../../auth/domain/interface/index';
 import { inject, injectable } from 'inversify';
 import 'reflect-metadata';
@@ -13,8 +14,13 @@ export class ProjectService {
         @inject(PROJECT_TYPES.ProjectRepository) private projectRepository: IProjectRepository
     ) { }
 
-    async getProjectById(projectId): Promise<IProject> {
+    async getProjectById(projectId, userId: string): Promise<IProject> {
         const project = await this.validateProjectExist(projectId);
+        console.log(project.manager.userId)
+        console.log(userId)
+        if (project.manager.userId !== userId) {
+            throw new ForbiddenException()
+        }
         return project;
     }
 

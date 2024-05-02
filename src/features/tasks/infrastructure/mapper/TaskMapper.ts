@@ -1,15 +1,19 @@
+import { AuthMapper } from './../../../auth/infrastructure/mapper/AuthMapper';
 import { inject, injectable } from "inversify";
 import 'reflect-metadata';
 import { Document } from "mongoose";
 import { ITaskDocument, ITask } from "../../domain/interface";
 import { IProject, IProjectDocument, PROJECT_TYPES, ProjectMapper } from "../../../projects";
+import { AUTH_TYPES } from "../../../auth";
 
 @injectable()
 export class TaskMapper {
 
     constructor(
         @inject(PROJECT_TYPES.ProjectMapper)
-        private projectMapper: ProjectMapper
+        private projectMapper: ProjectMapper,
+        @inject(AUTH_TYPES.AuthMapper)
+        private authMapper: AuthMapper
     ) { }
 
     mapToITask(taskDocument: Document & ITaskDocument): ITask {
@@ -22,7 +26,7 @@ export class TaskMapper {
             updatedAt: taskDocument.updatedAt,
             status: taskDocument.status
         } as ITask;
-        task.project = this.projectMapper.toIProject(taskDocument.project as IProjectDocument, this);
+        task.project = this.projectMapper.toIProject(taskDocument.project as IProjectDocument, this, this.authMapper);
         return task;
     }
 

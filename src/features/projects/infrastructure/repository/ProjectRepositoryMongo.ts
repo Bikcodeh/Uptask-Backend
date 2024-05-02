@@ -46,13 +46,13 @@ export class ProjectRepositoryMongo implements IProjectRepository {
 
     async updateProject(id: string, data: IProject): Promise<IProject> {
         const project = await Project.findOneAndUpdate({ _id: id }, { ...data }, { new: true });
-        return this.projectMapper.toIProject(await project.populate('tasks'), this.taskMapper);
+        return this.projectMapper.toIProject(await project.populate('tasks'), this.taskMapper, this.authMapper);
     }
 
     async getProjectById(id: string): Promise<IProject | null> {
         const project = await Project.findOne({ _id: id });
         if (!project) return null;
-        return this.projectMapper.toIProject(await project.populate('tasks'), this.taskMapper);
+        return this.projectMapper.toIProject(await project.populate(['tasks', 'manager']), this.taskMapper, this.authMapper);
     }
 
     async getProjects(userId: string): Promise<IProject[]> {
@@ -61,13 +61,13 @@ export class ProjectRepositoryMongo implements IProjectRepository {
                 { manager: { $in: userId } }
             ]
         }).populate('tasks');
-        return projects.map(p => this.projectMapper.toIProject(p, this.taskMapper));
+        return projects.map(p => this.projectMapper.toIProject(p, this.taskMapper, this.authMapper));
     }
 
     async createProject(data: IProject, user: IUser): Promise<IProject | null> {
         const project = new Project(data);
         project.manager = this.authMapper.toIUserDocument(user);
         const saved = await project.save();
-        return this.projectMapper.toIProject(saved, this.taskMapper);
+        return this.projectMapper.toIProject(saved, this.taskMapper, this.authMapper);
     }
 }

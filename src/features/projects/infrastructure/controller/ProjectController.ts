@@ -5,7 +5,6 @@ import { Request, Response } from "express";
 import { PROJECT_TYPES } from '../../domain/types/index';
 import { ProjectService } from "../service/ProjectService";
 import { wrapResponse } from "../../../../common/response/apiResponse";
-import { IUser } from "../../../auth";
 
 @injectable()
 export class ProjectController {
@@ -25,7 +24,7 @@ export class ProjectController {
    }
 
    getProjectById = async (req: Request, res: Response) => {
-      const project = await this.projectService.getProjectById(req.params.id);
+      const project = await this.projectService.getProjectById(req.params.id, req.user.userId);
       return res.status(StatusCodes.OK).json(wrapResponse({ data: project }));
    }
 

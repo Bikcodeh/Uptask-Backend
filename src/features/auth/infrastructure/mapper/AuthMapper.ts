@@ -13,6 +13,13 @@ export class AuthMapper {
         return user;
     }
 
+    toIUserSimple(userDocument: IUserDocument): IUser {
+        const { _id, __v, password,createdAt, updatedAt, email, confirmed, ...userData } = userDocument.toObject();
+        const user = userData as IUser;
+        user.userId = _id.toString();
+        return user;
+    }
+
     toIToken(tokenDocument: ITokenDocument): IToken {
         const { _id, __v, ...tokenData } = tokenDocument.toObject();
         const token = tokenData as IToken;
