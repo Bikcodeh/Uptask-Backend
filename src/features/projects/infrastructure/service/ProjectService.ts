@@ -15,10 +15,7 @@ export class ProjectService {
     ) { }
 
     async getProjectById(projectId, userId: string): Promise<IProject> {
-        const project = await this.validateProjectExist(projectId);
-        if (project.manager.userId !== userId) {
-            throw new ForbiddenException()
-        }
+        const project = await this.validateProjectExist(projectId, userId);
         return project;
     }
 
@@ -31,23 +28,26 @@ export class ProjectService {
         return await this.projectRepository.getProjects(userId)
     }
 
-    async deleteProjectById(id: string): Promise<void> {
-        await this.validateProjectExist(id)
+    async deleteProjectById(id: string, userId: string): Promise<void> {
+        await this.validateProjectExist(id, userId)
         const deleted = await this.projectRepository.deleteProjectById(id);
         if (!deleted) {
             throw new DeleteException();
         }
     }
 
-    async updateProject(id: string, data: IProject): Promise<IProject> {
-        await this.validateProjectExist(id)
+    async updateProject(id: string, data: IProject, userId: string): Promise<IProject> {
+        await this.validateProjectExist(id, userId)
         const project = await this.projectRepository.updateProject(id, data);
         return project;
     }
 
-    async validateProjectExist(projectId: string): Promise<IProject> {
+    async validateProjectExist(projectId: string, userId: string): Promise<IProject> {
         const project = await this.projectRepository.getProjectById(projectId);
         if (!project) throw new NotFoundException('Project not found');
+        if (project.manager.userId !== userId) {
+            throw new ForbiddenException()
+        }
         return project;
     }
 }
