@@ -60,7 +60,7 @@ export class ProjectRepositoryMongo implements IProjectRepository {
             $or: [
                 { manager: { $in: userId } }
             ]
-        }).populate('tasks');
+        }).populate(['tasks', 'manager']);
         return projects.map(p => this.projectMapper.toIProject(p, this.taskMapper, this.authMapper));
     }
 

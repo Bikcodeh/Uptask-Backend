@@ -15,15 +15,15 @@ export class TaskService {
         @inject(TASK_TYPES.TaskRepository) private taskRepository: ITaskRepository
     ) { }
 
-   createTask = async (data: ITask, projectId: string): Promise<ITask> => {
-        const project = await this.projectService.validateProjectExist(projectId);
+   createTask = async (data: ITask, projectId: string, userId: string): Promise<ITask> => {
+        const project = await this.projectService.validateProjectExist(projectId, userId);
         const task = await this.taskRepository.createTask(data, project);
         if (!task) throw new CreatingException();
         return task;
     }
 
-    getProjectTasks = async (projectId: string): Promise<ITask[]> => {
-        await this.projectService.validateProjectExist(projectId)
+    getProjectTasks = async (projectId: string, userId: string): Promise<ITask[]> => {
+        await this.projectService.validateProjectExist(projectId, userId)
         return await this.taskRepository.getProjectTasks(projectId);
     }
 
@@ -38,8 +38,8 @@ export class TaskService {
         return await this.taskRepository.updateTask(task, data);
     }
 
-    deleteTask = async (taskId: string, projectId: string): Promise<void> => {
-        await this.projectService.validateProjectExist(projectId);
+    deleteTask = async (taskId: string, projectId: string, userId: string): Promise<void> => {
+        await this.projectService.validateProjectExist(projectId, userId);
         const task = await this.validateProjectBelongs(taskId, projectId);
         const deleted = await this.taskRepository.deleteTask(task, projectId);
         if (!deleted) {
@@ -47,8 +47,8 @@ export class TaskService {
         }
     }
 
-    updateStatusTaskById = async (taskId: string, projectId: string, status: string): Promise<ITask> => {
-        await this.projectService.validateProjectExist(projectId);
+    updateStatusTaskById = async (taskId: string, projectId: string, status: string, userId: string): Promise<ITask> => {
+        await this.projectService.validateProjectExist(projectId, userId);
         await this.validateProjectBelongs(taskId, projectId);
         return await this.taskRepository.updateStatusTaskById(taskId, projectId, status)
     }

@@ -29,12 +29,12 @@ export class ProjectController {
    }
 
    updateProjectById = async (req: Request, res: Response) => {
-      const project = await this.projectService.updateProject(req.params.id, req.body);
+      const project = await this.projectService.updateProject(req.params.id, req.body, req.user.userId);
       return res.status(StatusCodes.OK).json(wrapResponse({ msg: 'Project updated successfully' ,data: project }));
    }
 
    deleteProjectById = async (req: Request, res: Response) => {
-      await this.projectService.deleteProjectById(req.params.id);
+      await this.projectService.deleteProjectById(req.params.id, req.user.userId);
       return res.status(StatusCodes.OK).json(wrapResponse({ msg: 'Project deleted' }));
    }
 }

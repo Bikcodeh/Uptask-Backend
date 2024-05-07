@@ -13,12 +13,12 @@ export class Taskcontroller {
     ) { }
 
     createTask = async (req: Request, res: Response) => {
-        const task = await this.taskService.createTask(req.body, req.params.projectId);
+        const task = await this.taskService.createTask(req.body, req.params.projectId, req.user.userId);
         res.status(StatusCodes.OK).json(wrapResponse({ msg: 'Task created', data: task })).send()
     }
 
     getProjectTasks = async (req: Request, res: Response) => {
-        const tasks = await this.taskService.getProjectTasks(req.params.projectId);
+        const tasks = await this.taskService.getProjectTasks(req.params.projectId, req.user.userId);
         res.status(StatusCodes.OK).json(wrapResponse({ data: tasks }));
     }
 
@@ -33,7 +33,7 @@ export class Taskcontroller {
     }
 
     deleteTask = async (req: Request, res: Response) => {
-        await this.taskService.deleteTask(req.params.taskId, req.params.projectId);
+        await this.taskService.deleteTask(req.params.taskId, req.params.projectId, req.user.userId);
         res.status(StatusCodes.OK).json(wrapResponse({ msg: 'Task Deleted' }));
     }
 
@@ -41,7 +41,8 @@ export class Taskcontroller {
         const task = await this.taskService.updateStatusTaskById(
             req.params.taskId,
             req.params.projectId,
-            req.body.status
+            req.body.status,
+            req.user.userId
         );
         res.status(StatusCodes.OK).json(wrapResponse({ data: task, msg: 'Status Updated!' }))
     }
