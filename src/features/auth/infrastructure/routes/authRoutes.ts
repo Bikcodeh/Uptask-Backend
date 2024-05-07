@@ -4,6 +4,7 @@ import { container } from "../../../../config/di";
 import { handleInputErrors } from '../../../../common/middleware/validatorMiddleware';
 import { body, param } from 'express-validator';
 import { AuthController } from "../controller/AuthController";
+import { authenticateMiddleware } from "../../../../common/middleware";
 
 const authRoutes = Router();
 const authController = container.resolve(AuthController);
@@ -73,5 +74,10 @@ authRoutes.post(
     authController.updatePasswordWithToken
 )
 
+authRoutes.get(
+    '/user',
+    authenticateMiddleware,
+    authController.user
+)
 
 export { authRoutes };

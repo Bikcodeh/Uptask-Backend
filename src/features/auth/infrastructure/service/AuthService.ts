@@ -7,12 +7,14 @@ import { IAuthRepository } from '../../domain/repository/AuthRepository';
 import { EmailRegisteredException, InvalidCredentialsException, TokenNotExistException, UserAlreadyConfirmedException, UserNotConfirmedException, UserNotFoundException } from '../../../../common/exception';
 import { AuthEmail } from '../../../../emails/AuthEmail';
 import { checkPassword } from './../../../../utils';
+import { AuthMapper } from '../mapper/AuthMapper';
 
 @injectable()
 export class AuthService {
 
     constructor(
-        @inject(AUTH_TYPES.AuthRepository) private authRepository: IAuthRepository
+        @inject(AUTH_TYPES.AuthRepository) private authRepository: IAuthRepository,
+        @inject(AUTH_TYPES.AuthMapper) private authMapper: AuthMapper
     ) { }
 
     async createAccount(data: UserBody): Promise<IUser> {
@@ -112,5 +114,9 @@ export class AuthService {
 
     async userExistById(id: string): Promise<IUser | null> {
         return await this.authRepository.userExistById(id);
+    }
+
+    async user(user: IUser): Promise<IUser | null> {
+        return this.authMapper.toIUserSimpleFromIUser(user);
     }
 }

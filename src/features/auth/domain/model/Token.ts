@@ -13,7 +13,7 @@ const tokenSchema: Schema = new Schema<ITokenDocument>({
     createdAt: {
         type: Date,
         default: Date.now(),
-        expires: '2h'
+        expires: 60*60*24*7
     }
 })
 
