@@ -77,6 +77,6 @@ export class AuthController {
 
     user = async (req: Request, res: Response) => {
         const user = await this.authService.user(req.user);
-        return res.status(StatusCodes.OK).json(wrapResponse({ data: { user } }))
+        return res.status(StatusCodes.OK).json(wrapResponse({ data: {...user } }))
     }
 }
